@@ -1,4 +1,4 @@
-package com.example.android.ersatz;
+package com.example.android.ersatz.screens.auth;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.ersatz.MainActivity;
+import com.example.android.ersatz.R;
 import com.example.android.ersatz.api.ItWeekApi;
 import com.example.android.ersatz.api.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;

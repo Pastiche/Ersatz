@@ -19,13 +19,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.android.ersatz.screens.contacts.ContactsFragment;
+import com.example.android.ersatz.screens.profile.ProfileFragment;
+import com.example.android.ersatz.screens.search.SearchFragment;
+
 /**
  * Provides the appropriate {@link Fragment} for a view pager.
  */
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private String tabTitles[] = new String[]{"Numbers", "Family", "Colors", "Phrases"};
-    final int PAGE_COUNT = 4;
+    private String tabTitles[] = new String[]{"Profile", "Contacts", "Search"};
+    final int PAGE_COUNT = 3;
 
     public SimpleFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -34,13 +38,11 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new NumbersFragment();
+            return new ProfileFragment();
         } else if (position == 1) {
-            return new FamilyFragment();
-        } else if (position == 2) {
-            return new ColorsFragment();
+            return new ContactsFragment();
         } else {
-            return new PhrasesFragment();
+            return new SearchFragment();
         }
     }
 

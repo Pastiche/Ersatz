@@ -12,17 +12,75 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Dark">
-        <activity android:name="com.example.android.ersatz.SigninActivity">
+
+        <!-- main -->
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
+        <!-- signin -->
         <activity
-            android:name="com.example.android.ersatz.SignupActivity"
-            android:theme="@style/AppTheme.Dark" />
+            android:name=".screens.auth.SigninActivity"
+            android:label="Sign In"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Dark">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <!-- signup -->
+        <activity
+            android:name=".screens.auth.SignupActivity"
+            android:label="Sign Up"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Dark">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <!-- contacts -->
+        <activity
+            android:name=".screens.contacts.ContactsActivity"
+            android:label="Contacts"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Dark">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <!-- search -->
+        <activity
+            android:name=".screens.search.SearchActivity"
+            android:label="Search"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Dark">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <!-- profile -->
+        <activity
+            android:name=".screens.profile.ProfileActivity"
+            android:label="Profile"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Dark">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
     </application>
 
