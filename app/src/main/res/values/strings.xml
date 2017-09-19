@@ -21,4 +21,6 @@
     <string name="account_name">Account Name</string>
     <string name="sign_in">Sign In</string>
     <string name="create_new_account">Create new account</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="search">Search</string>
 </resources>

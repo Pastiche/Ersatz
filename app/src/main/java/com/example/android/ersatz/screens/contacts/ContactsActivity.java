@@ -16,9 +16,9 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        getSupportFragmentManager().beginTransaction()
+/*        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, new ContactsFragment())
-                .commit();
+                .commit();*/
     }
 
 }
