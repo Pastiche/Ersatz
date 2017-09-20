@@ -30,7 +30,6 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private String tabTitles[] = new String[]{"Profile", "Contacts", "Search"};
     final int PAGE_COUNT = 3;
-    private int mCurrentPosition;
 
     public SimpleFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -38,8 +37,6 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-
-        mCurrentPosition = position;
 
         if (position == 0) {
             return new ProfileFragment();
@@ -61,7 +58,4 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         return tabTitles[position];
     }
 
-    public int getmCurrentPosition() {
-        return mCurrentPosition;
-    }
 }

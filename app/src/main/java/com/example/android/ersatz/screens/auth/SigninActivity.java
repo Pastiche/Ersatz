@@ -190,7 +190,7 @@ public class SigninActivity extends AppCompatActivity {
         return valid;
     }
 
-    //------------UI details---------------//
+    //------------UI profile_view---------------//
 
     private void setOnClickListeners() {
         _signinButton.setOnClickListener(v -> signin());

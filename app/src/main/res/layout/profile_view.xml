@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
+
+            <!-- first name -->
+            <LinearLayout
+                android:id="@+id/first_name_wrapper"
+                style="@style/profile_row">
+
+                <TextView
+                    android:id="@+id/first_name"
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- middle name -->
+            <LinearLayout
+                android:id="@+id/middle_name_wrapper"
+                style="@style/profile_row">
+
+                <TextView
+                    android:id="@+id/middle_name"
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- last name -->
+            <LinearLayout
+                android:id="@+id/last_name_wrapper"
+                style="@style/profile_row">
+
+                <TextView
+                    android:id="@+id/last_name"
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- email -->
+            <LinearLayout
+                android:id="@+id/email_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    android:id="@+id/email"
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_email" />
+
+                <TextView
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- skype -->
+            <LinearLayout
+                android:id="@+id/skype_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_skype" />
+
+                <TextView
+                    android:id="@+id/skype"
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- github -->
+            <LinearLayout
+                android:id="@+id/github_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    android:id="@+id/github"
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_github" />
+
+                <TextView
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- vk -->
+            <LinearLayout
+                android:id="@+id/vk_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_vk" />
+
+                <TextView
+                    android:id="@+id/vk"
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- fb -->
+            <LinearLayout
+                android:id="@+id/fb_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_fb" />
+
+                <TextView
+                    android:id="@+id/fb"
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- twitter -->
+            <LinearLayout
+                android:id="@+id/twitter_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    android:id="@+id/twitter"
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_twitter" />
+
+                <TextView
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- instagram -->
+            <LinearLayout
+                android:id="@+id/instagram_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_instagram" />
+
+                <TextView
+                    android:id="@+id/instagram"
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+            <!-- linkedin -->
+            <LinearLayout
+                android:id="@+id/linkedin_wrapper"
+                style="@style/profile_row">
+
+                <ImageView
+                    android:id="@+id/linkedin"
+                    style="@style/profile_image"
+                    android:src="@mipmap/ic_linkedin" />
+
+                <TextView
+                    style="@style/profile_text"
+                    tools:text="lazzyrex" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:fabSize="normal"
+        app:srcCompat="@mipmap/ic_qr"
+        app:useCompatPadding="true" />
+
+</android.support.design.widget.CoordinatorLayout>

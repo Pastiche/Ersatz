@@ -212,7 +212,7 @@ public class SignupActivity extends AppCompatActivity {
         return valid;
     }
 
-    //------------UI details---------------//
+    //------------UI profile_view---------------//
 
     private void setOnClickListeners() {
         _signupButton.setOnClickListener(v -> signup());
