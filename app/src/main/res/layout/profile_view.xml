@@ -59,11 +59,11 @@
                 style="@style/profile_row">
 
                 <ImageView
-                    android:id="@+id/email"
                     style="@style/profile_image"
                     android:src="@mipmap/ic_email" />
 
                 <TextView
+                    android:id="@+id/email"
                     style="@style/profile_text"
                     tools:text="lazzyrex" />
 
@@ -89,11 +89,11 @@
                 style="@style/profile_row">
 
                 <ImageView
-                    android:id="@+id/github"
                     style="@style/profile_image"
                     android:src="@mipmap/ic_github" />
 
                 <TextView
+                    android:id="@+id/github"
                     style="@style/profile_text"
                     tools:text="lazzyrex" />
 
@@ -134,11 +134,11 @@
                 style="@style/profile_row">
 
                 <ImageView
-                    android:id="@+id/twitter"
                     style="@style/profile_image"
                     android:src="@mipmap/ic_twitter" />
 
                 <TextView
+                    android:id="@+id/twitter"
                     style="@style/profile_text"
                     tools:text="lazzyrex" />
 
@@ -164,11 +164,11 @@
                 style="@style/profile_row">
 
                 <ImageView
-                    android:id="@+id/linkedin"
                     style="@style/profile_image"
                     android:src="@mipmap/ic_linkedin" />
 
                 <TextView
+                    android:id="@+id/linkedin"
                     style="@style/profile_text"
                     tools:text="lazzyrex" />
 

@@ -1,4 +1,4 @@
-package com.example.android.ersatz.api;
+package com.example.android.ersatz.network;
 
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.Profile;
@@ -11,7 +11,6 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 public interface ItWeekService {
 

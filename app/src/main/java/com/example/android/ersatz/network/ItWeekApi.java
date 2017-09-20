@@ -1,4 +1,4 @@
-package com.example.android.ersatz.api;
+package com.example.android.ersatz.network;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

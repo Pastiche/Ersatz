@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.example.android.ersatz.MainActivity;
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.api.ItWeekApi;
-import com.example.android.ersatz.api.ItWeekService;
+import com.example.android.ersatz.network.ItWeekApi;
+import com.example.android.ersatz.network.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.TokenBody;
 
