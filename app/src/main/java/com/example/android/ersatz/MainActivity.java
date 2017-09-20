@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.android.ersatz.screens.auth.SigninActivity;
 import com.example.android.ersatz.navigation.SimpleFragmentPagerAdapter;
+import com.example.android.ersatz.screens.auth.SignupActivity;
 import com.example.android.ersatz.screens.search.PaginationAdapter;
 
 import butterknife.Bind;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int TWO_BACK_PRESSES_INTERVAL = 2000; // # milliseconds
     private long mLastBackPressTime;
+
+    private SharedPreferences sharedPreferences;
 
     SimpleFragmentPagerAdapter mAdapter;
     /*    private PaginationAdapter adapter;*/
@@ -79,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -131,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.signout_button:
 
-/*                clearPreferences();
-                startLoginActivity();*/
+                clearPreferences();
+                startSigninActivity();
                 return true;
 
             default:
@@ -141,8 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    //------------UI profile---------------//
+    //------------UI details---------------//
     @Override
     public void onBackPressed() {
         if (mLastBackPressTime + TWO_BACK_PRESSES_INTERVAL > System.currentTimeMillis()) {
@@ -153,5 +154,17 @@ public class MainActivity extends AppCompatActivity {
         }
         mLastBackPressTime = System.currentTimeMillis();
     }
+
+    //-------- Helpers --------//
+
+    private void clearPreferences() {
+
+        sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+    }
+
 
 }

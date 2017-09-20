@@ -2,6 +2,7 @@ package com.example.android.ersatz.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.Contact;
@@ -10,6 +11,7 @@ import com.example.android.ersatz.entities.TokenBody;
 import com.example.android.ersatz.network.ItWeekApi;
 import com.example.android.ersatz.network.ItWeekService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,9 +25,11 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
          * This method will be called on UI thread when fetching of requested profiles
          * completes.
          *
-         * @param profiles a list of fetched profiles; will never be null
+         * @param profile a list of fetched profiles; will never be null
          */
-        void onProfilesFetched(List<Profile> profiles);
+        void onProfilesFetched(Profile profile);
+
+        void onErrorOccured(String message);
     }
 
     private ItWeekService mClient;
@@ -34,74 +38,52 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
     public NetworkProfileManager(Context context) {
         mContext = context;
         mClient = ItWeekApi.getClient().create(ItWeekService.class);
-}
+    }
 
-    /**
-     * Fetch an SMS message by its ID. Fetch will be done on background thread and registered
-     * listeners will be notified of result on UI thread.
-     *
-     * @param id ID of message to fetch
-     */
-/*    public void fetchSmsMessageById(final long id) {
+/*    public void fetchProfileById(final long id) {
 
         List<Profile> result = extractSmsMessagesFromCursor(cursor);
         notifySmsMessagesFetched(result);
 
 
-    }
+    }*/
 
-    private void sendFetchRequest() {
+    //-------- fetching data --------//
+    public void fetchMyProfile() {
 
-        AuthBody authBody = new AuthBody(accountName, password);
+        String token = loadToken();
 
-        client.signIn(authBody).enqueue(new Callback<TokenBody>() {
+        mClient.getMyProfile(token).enqueue(new Callback<Profile>() {
             @Override
-            public void onResponse(Call<TokenBody> call, Response<TokenBody> response) {
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
                 handleResponse(response);
             }
 
             @Override
-            public void onFailure(Call<TokenBody> call, Throwable t) {
+            public void onFailure(Call<Profile> call, Throwable t) {
                 handleFailure();
             }
         });
     }
 
-    private void handleResponse(Response<TokenBody> response) {
+    //-------- processing response --------//
 
-        TokenBody body = response.body();
+    private void handleResponse(Response<Profile> response) {
+
+        Profile result = response.body();
+
         int code = response.code();
-
         switch (code) {
-
             case 200:
-                if (body.getToken() == null)
-                    informSigninResult("Incorrect account name or password");
-                    // TODO: ask for the list of errors ad handle them all
-                else
-                    handleSuccess(body.getToken());
-                break;
-            case 401:
-                informSigninResult("Incorrect account name or password");
+                notifyProfileFetched(result);
                 break;
             case 500:
-                informSigninResult("Server error");
+                notifyError("Server error");
                 break;
             default:
-                informSigninResult("Unknown error");
+                notifyError("Unknown error");
 
         }
-    }
-
-    private void handleSuccess(String token) {
-        informSigninResult("Success!");
-        storeToken(token);
-        startMainActivity();
-    }
-
-    private String loadToken() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences("authorization", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("token", null);
     }
 
     private void handleFailure() {
@@ -110,8 +92,32 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
         if (!isNetworkConnected())
             message = "No Internet Connection";
 
-        informSigninResult(message);
-    }*/
+        notifyError(message);
+    }
 
+    //-------- notifying listeners --------//
 
+    private void notifyProfileFetched(final Profile profile) {
+        for (NetworkProfileManagerListener listener : getListeners()) {
+            listener.onProfilesFetched(profile);
+        }
+    }
+
+    private void notifyError(String message) {
+        for (NetworkProfileManagerListener listener : getListeners()) {
+            listener.onErrorOccured(message);
+        }
+    }
+
+    //-------- Helpers --------//
+
+    private String loadToken() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("authorization", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("token", null);
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
 }

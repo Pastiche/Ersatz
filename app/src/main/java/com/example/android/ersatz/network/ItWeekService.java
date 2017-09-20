@@ -23,7 +23,7 @@ public interface ItWeekService {
     Call<TokenBody> signIn(@Body AuthBody authBody);
 
     @GET("profile")
-    Call<Profile> getMyProfile(@Header("Authorisation") String token);
+    Call<Profile> getMyProfile(@Header("Authorization") String token);
 
     @Headers("Content-type: application/json")
     @GET("public/{page_id}")

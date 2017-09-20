@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // TODO: ask, what the fuck is 2 ids??
+// TODO: what to do if my token got wrecked?
+// TODO: make menu part of the view
 
 public class ProfileFragment extends Fragment implements
         ProfileView.ProfileViewListener,
@@ -51,17 +54,40 @@ public class ProfileFragment extends Fragment implements
         return mView.getRootView();
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
         mNetworkManager.registerListener(this);
+    }
 
-        Profile profile = makeDummyProfile();
-        mView.bindProfile(profile);
+    @Override
+    public void onStop() {
+        super.onStop();
+        mNetworkManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onShowQrCodeClick() {
+        mNetworkManager.fetchMyProfile();
+    }
+
+    @Override
+    public void onContactUrlClick(Contact contact) {
 
     }
 
+    @Override
+    public void onProfilesFetched(Profile profile) {
+        mView.bindProfile(profile);
+    }
+
+    @Override
+    public void onErrorOccured(String message) {
+
+    }
+
+
+    //<editor-fold desc="dummy profile">
     private Profile makeDummyProfile() {
 
         Contact contact1 = new Contact(Contact.CONTACT_TYPE_EMAIL, "ivashkovdv@gmail.com");
@@ -83,27 +109,5 @@ public class ProfileFragment extends Fragment implements
 
         return new Profile(userId, firstName, lastName, middleName, contacts, pageId, pageUrl);
     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mNetworkManager.unregisterListener(this);
-    }
-
-
-    @Override
-    public void onShowQrCodeClick() {
-
-    }
-
-    @Override
-    public void onContactUrlClick(Contact contact) {
-
-    }
-
-
-    @Override
-    public void onProfilesFetched(List<Profile> profiles) {
-
-    }
+    //</editor-fold>
 }
