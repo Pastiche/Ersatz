@@ -15,6 +15,7 @@ import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
+import com.example.android.ersatz.network.ErsatzApp;
 import com.example.android.ersatz.screens.profile.view.ProfileView;
 import com.example.android.ersatz.screens.profile.view.ProfileViewImpl;
 
@@ -47,7 +48,7 @@ public class ProfileFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // initialization
-        mNetworkManager = new NetworkProfileManager(this.getContext());
+        mNetworkManager = new NetworkProfileManager(this.getActivity());
         mView = new ProfileViewImpl(inflater, container);
         // connect controller and view
         mView.setListener(this);

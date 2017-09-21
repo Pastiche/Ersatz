@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.example.android.ersatz.MainActivity;
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.network.ItWeekApi;
+import com.example.android.ersatz.network.ErsatzApp;
 import com.example.android.ersatz.network.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.TokenBody;
@@ -29,7 +29,7 @@ import retrofit2.Response;
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
-    private ItWeekService client = ItWeekApi.getClient().create(ItWeekService.class);
+    ItWeekService itWeekService;
     private ProgressDialog progressDialog;
 
     @Bind(R.id.input_account_name)
@@ -50,7 +50,6 @@ public class SignupActivity extends AppCompatActivity {
     TextInputLayout _rePasswordTextWrapper;
 
     // TODO: Deal with progressbar
-    // TODO: get rid of logs
     // TODO: extract abstract method and interface (?) for signup and signin
     // TODO: provide DI with Dagger 2
     //
@@ -60,7 +59,7 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
-
+        itWeekService = ErsatzApp.get(this).getItWeekService();
         setOnClickListeners();
     }
 
@@ -83,7 +82,7 @@ public class SignupActivity extends AppCompatActivity {
 
         AuthBody authBody = new AuthBody(accountName, password);
 
-        client.signUp(authBody).enqueue(new Callback<TokenBody>() {
+        itWeekService.signUp(authBody).enqueue(new Callback<TokenBody>() {
             @Override
             public void onResponse(Call<TokenBody> call, Response<TokenBody> response) {
                 handleResponse(response);

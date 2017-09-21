@@ -23,9 +23,7 @@ import com.example.android.ersatz.screens.search.PaginationAdapter;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by Denis on 19.09.2017.
- */
+// TODO: configure animation of the signin-signout transitions - it is slow
 
 public class MainActivity extends AppCompatActivity {
 

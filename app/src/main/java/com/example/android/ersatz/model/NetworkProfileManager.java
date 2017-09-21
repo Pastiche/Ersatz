@@ -1,11 +1,12 @@
 package com.example.android.ersatz.model;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 
 import com.example.android.ersatz.entities.Profile;
-import com.example.android.ersatz.network.ItWeekApi;
+import com.example.android.ersatz.network.ErsatzApp;
 import com.example.android.ersatz.network.ItWeekService;
 
 import retrofit2.Call;
@@ -26,12 +27,12 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
         void onErrorOccurred(String message);
     }
 
-    private ItWeekService mClient;
-    private Context mContext;
+    private ItWeekService itWeekService;
+    private Activity mParentActivity;
 
-    public NetworkProfileManager(Context context) {
-        mContext = context;
-        mClient = ItWeekApi.getClient().create(ItWeekService.class);
+    public NetworkProfileManager(Activity parentActivity) {
+        mParentActivity = parentActivity;
+        itWeekService = ErsatzApp.get(parentActivity).getItWeekService();
     }
 
 /*    public void fetchProfileById(final long id) {
@@ -47,7 +48,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
 
         String token = loadToken();
 
-        mClient.getMyProfile(token).enqueue(new Callback<Profile>() {
+        itWeekService.getMyProfile(token).enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 handleResponse(response);
@@ -65,6 +66,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
     private void handleResponse(Response<Profile> response) {
 
         Profile result = response.body();
+        checkResponseOrigin(response);
 
         int code = response.code();
         switch (code) {
@@ -89,6 +91,16 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
         notifyError(message);
     }
 
+    private void checkResponseOrigin(Response<Profile> response) {
+        if (response.raw().cacheResponse() != null) {
+            System.out.println("okh: response was served from cache");
+        }
+
+        if (response.raw().networkResponse() != null) {
+            System.out.println("okh: response was served from server");
+        }
+    }
+
     //-------- notifying listeners --------//
 
     private void notifyProfileFetched(final Profile profile) {
@@ -106,12 +118,12 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
     //-------- Helpers --------//
 
     private String loadToken() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences("authorization", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mParentActivity.getSharedPreferences("authorization", Context.MODE_PRIVATE);
         return sharedPreferences.getString("token", null);
     }
 
     private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) mParentActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 }

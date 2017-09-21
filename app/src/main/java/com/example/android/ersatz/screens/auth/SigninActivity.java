@@ -1,7 +1,6 @@
 package com.example.android.ersatz.screens.auth;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -16,25 +15,44 @@ import android.widget.Toast;
 
 import com.example.android.ersatz.MainActivity;
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.network.ItWeekApi;
+import com.example.android.ersatz.di.DaggerSigninActivityComponent;
+import com.example.android.ersatz.di.SigninActivityComponent;
+import com.example.android.ersatz.di.modules.SigninActivityModule;
+import com.example.android.ersatz.network.ErsatzApp;
 import com.example.android.ersatz.network.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.TokenBody;
 
-import butterknife.ButterKnife;
+import javax.inject.Inject;
+
 import butterknife.Bind;
+import butterknife.BindString;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+// TODO: also, make a separate class for validation and that kind of things or keep it in the above class
+// TODO: optimize scopes like do I really need different Connectivity Managers in different activities?
+// TODO: manage all constants in one class, like: response_codes, preference_strings, base_url;
+// TODO: ask for the list of errors ad handle them all
+// TODO: make name and pass at least 3 chars
+// TODO: hugely implement Butterknife
+
 public class SigninActivity extends AppCompatActivity {
+
     private static final String TAG = "SigninActivity";
-
-    private ItWeekService client = ItWeekApi.getClient().create(ItWeekService.class);
-
     private static final int TWO_BACK_PRESSES_INTERVAL = 2000; // # milliseconds
     private long mLastBackPressTime;
-    private ProgressDialog progressDialog;
+
+    @Inject
+    SigninActivityComponent signinActivityComponent;
+    @Inject
+    ItWeekService itWeekService;
+    @Inject
+    ProgressDialog progressDialog;
+    @Inject
+    ConnectivityManager cm;
 
     @Bind(R.id.input_account_name)
     EditText _accountNameText;
@@ -44,39 +62,73 @@ public class SigninActivity extends AppCompatActivity {
     Button _signinButton;
     @Bind(R.id.link_signup)
     TextView _signupLink;
-
     @Bind(R.id.input_account_name_wrapper)
     TextInputLayout _accountNameTextWrapper;
     @Bind(R.id.input_password_wrapper)
     TextInputLayout _passwordTextWrapper;
 
+    @BindString(R.string.check_credentials)
+    String checkCredentialsMessage;
+    @BindString(R.string.success_message)
+    String successMessage;
+    @BindString(R.string.incorrect_name_or_pass_message)
+    String incorrectNameOrPassMessage;
+    @BindString(R.string.server_error_message)
+    String serverErrorMessage;
+    @BindString(R.string.unknown_error_message)
+    String unknownErrorMessage;
+    @BindString(R.string.no_internet_message)
+    String noInternetMessage;
+    @BindString(R.string.enter_account_name_message)
+    String enterAccountNameMessage;
+    @BindString(R.string.enter_pass_message)
+    String enterPasswordMessage;
+    @BindString(R.string.pre_exit_message)
+    String preExitMessage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_signin);
+
         ButterKnife.bind(this);
+
+        buildComponent();
+
+        signinActivityComponent.injectSigninActivity(this);
 
         setOnClickListeners();
     }
 
-    private void signin() {
+    private void buildComponent() {
+        signinActivityComponent =
+                DaggerSigninActivityComponent.builder()
+                        .signinActivityModule(new SigninActivityModule(this))
+                        .ersatzAppComponent(ErsatzApp.get(this).getComponent())
+                        .build();
+    }
 
-        launchProgressDialog();
+    private void setOnClickListeners() {
+        _signinButton.setOnClickListener(v -> signin());
+        _signupLink.setOnClickListener(v -> startSignupActivity());
+    }
+
+    private void signin() {
+        progressDialog.show();
 
         if (!validate())
-            informSigninResult("Check credentials");
+            informSigninResult(checkCredentialsMessage);
         else
             sendSigninRequest();
-
     }
 
     private void sendSigninRequest() {
         String accountName = collectAccountName();
         String password = collectPassword();
-
         AuthBody authBody = new AuthBody(accountName, password);
 
-        client.signIn(authBody).enqueue(new Callback<TokenBody>() {
+        itWeekService.signIn(authBody).enqueue(new Callback<TokenBody>() {
             @Override
             public void onResponse(Call<TokenBody> call, Response<TokenBody> response) {
                 handleResponse(response);
@@ -90,33 +142,29 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void handleResponse(Response<TokenBody> response) {
-
         TokenBody body = response.body();
         int code = response.code();
 
         switch (code) {
-
             case 200:
                 if (body.getToken() == null)
-                    informSigninResult("Incorrect account name or password");
-                    // TODO: ask for the list of errors ad handle them all
+                    informSigninResult(incorrectNameOrPassMessage);
                 else
                     handleSuccess(body.getToken());
                 break;
             case 401:
-                informSigninResult("Incorrect account name or password");
+                informSigninResult(incorrectNameOrPassMessage);
                 break;
             case 500:
-                informSigninResult("Server error");
+                informSigninResult(serverErrorMessage);
                 break;
             default:
-                informSigninResult("Unknown error");
-
+                informSigninResult(unknownErrorMessage);
         }
     }
 
     private void handleSuccess(String token) {
-        informSigninResult("Success!");
+        informSigninResult(successMessage);
         storeToken(token);
         startMainActivity();
     }
@@ -129,11 +177,9 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void handleFailure() {
-        String message = "Unknown error";
-
+        String message = unknownErrorMessage;
         if (!isNetworkConnected())
-            message = "No Internet Connection";
-
+            message = noInternetMessage;
         informSigninResult(message);
     }
 
@@ -157,7 +203,6 @@ public class SigninActivity extends AppCompatActivity {
     //------------Validation---------------//
 
     private boolean validate() {
-
         return validateAccountName() &&
                 validatePassword();
     }
@@ -168,7 +213,7 @@ public class SigninActivity extends AppCompatActivity {
         boolean valid = true;
 
         if (accountName.isEmpty()) {
-            _accountNameTextWrapper.setError("enter account name");
+            _accountNameTextWrapper.setError(enterAccountNameMessage);
             valid = false;
         } else {
             _accountNameTextWrapper.setError(null);
@@ -182,7 +227,7 @@ public class SigninActivity extends AppCompatActivity {
         boolean valid = true;
 
         if (password.isEmpty()) {
-            _passwordTextWrapper.setError("enter password");
+            _passwordTextWrapper.setError(enterPasswordMessage);
             valid = false;
         } else {
             _passwordTextWrapper.setError(null);
@@ -192,28 +237,13 @@ public class SigninActivity extends AppCompatActivity {
 
     //------------UI profile_view---------------//
 
-    private void setOnClickListeners() {
-        _signinButton.setOnClickListener(v -> signin());
-        _signupLink.setOnClickListener(v -> startSignupActivity());
-    }
-
-    private void launchProgressDialog() {
-        constructProgressDialog();
-        progressDialog.show();
-    }
-
-    private void constructProgressDialog() {
-
-        progressDialog = new ProgressDialog(SigninActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Signing in...");
-
-    }
-
     private void informSigninResult(String message) {
-        Toast.makeText(SigninActivity.this, message, Toast.LENGTH_SHORT).show();
+        showMessage(message);
         progressDialog.dismiss();
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(SigninActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void addTransition() {
@@ -222,13 +252,17 @@ public class SigninActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mLastBackPressTime + TWO_BACK_PRESSES_INTERVAL > System.currentTimeMillis()) {
+        if (hasDoubleCLick()) {
             super.onBackPressed();
             return;
         } else {
-            Toast.makeText(getBaseContext(), "Tap back button in order to exit", Toast.LENGTH_SHORT).show();
+            showMessage(preExitMessage);
         }
         mLastBackPressTime = System.currentTimeMillis();
+    }
+
+    private boolean hasDoubleCLick() {
+        return mLastBackPressTime + TWO_BACK_PRESSES_INTERVAL > System.currentTimeMillis();
     }
 
     //------------Helpers---------------//
@@ -242,7 +276,6 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
