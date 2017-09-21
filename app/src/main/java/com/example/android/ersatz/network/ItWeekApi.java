@@ -21,16 +21,6 @@ public class ItWeekApi {
             HttpLoggingInterceptor logger = new HttpLoggingInterceptor();
             logger.setLevel(HttpLoggingInterceptor.Level.BODY);
             okHttpClientBuilder.addInterceptor(logger);
-//            okHttpClientBuilder.addInterceptor(new Interceptor() {
-//                @Override
-//                public Response intercept(Chain chain) throws IOException {
-//
-//                    Request request = chain.request();
-//                    Request.Builder newRequest = request.newBuilder().header("Authorisation", "secret-key");
-//                    chain.proceed(newRequest.build());
-//                    return null;
-//                }
-//            });
 
             retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
@@ -40,6 +30,5 @@ public class ItWeekApi {
         }
         return retrofit;
     }
-
 
 }

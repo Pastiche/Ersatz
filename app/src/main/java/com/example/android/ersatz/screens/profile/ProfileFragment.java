@@ -36,6 +36,7 @@ public class ProfileFragment extends Fragment implements
     public ProfileFragment() {
     }
 
+    //-------- lifecycle --------//
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,15 +46,12 @@ public class ProfileFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // actually we should get rid of this dependency using dagger 2
+        // initialization
         mNetworkManager = new NetworkProfileManager(this.getContext());
-
-        // Instantiate MVC view associated with this fragment
         mView = new ProfileViewImpl(inflater, container);
+        // connect controller and view
         mView.setListener(this);
 
-        // Return the root view of the associated MVC view
         return mView.getRootView();
     }
 
@@ -70,6 +68,8 @@ public class ProfileFragment extends Fragment implements
         mNetworkManager.unregisterListener(this);
     }
 
+    //-------- view callbacks --------//
+
     @Override
     public void onEditClick() {
 
@@ -80,19 +80,23 @@ public class ProfileFragment extends Fragment implements
 
     }
 
+    //-------- manager callbacks --------//
+
     @Override
     public void onProfileFetched(Profile profile) {
         mView.bindProfile(profile);
     }
 
     @Override
-    public void onErrorOccured(String message) {
-        Toast.makeText(this.getContext(), message, Toast.LENGTH_LONG).show();
+    public void onErrorOccurred(String message) {
+        // TODO: probably, this should also be implemented on the View side:
+        showMessage(message);
     }
+
+    //-------- menu --------//
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-/*        MenuItem qrCodeButton = menu.add(Menu.NONE, Menu.NONE, Menu.CATEGORY_SECONDARY, "QR-code");*/
         inflater.inflate(R.menu.menu_profile, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -101,11 +105,17 @@ public class ProfileFragment extends Fragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.qr_button:
-                Toast.makeText(this.getContext(), "QR-code showing...", Toast.LENGTH_SHORT).show();
+                showMessage("QR code showing...");
                 return true;
             default:
                 return this.getActivity().onOptionsItemSelected(item);
         }
+    }
+
+    //-------- helpers --------//
+
+    private void showMessage(String message) {
+        Toast.makeText(this.getContext(), message, Toast.LENGTH_LONG).show();
     }
 
     //<editor-fold desc="dummy profile">

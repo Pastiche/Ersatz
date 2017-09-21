@@ -57,11 +57,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String loadToken() {
-        SharedPreferences sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
-        return sharedPreferences.getString("token", null);
-    }
-
     private void startSigninActivity() {
         Intent intent = new Intent(getApplicationContext(), SigninActivity.class);
         startActivity(intent);
@@ -84,12 +79,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        // inflate menu
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem logInItem = menu.findItem(R.id.signout_button);
-
-        logInItem.setTitle("Sign Out");
+        MenuItem signOutItem = menu.findItem(R.id.signout_button);
+        signOutItem.setTitle("Sign Out");
 
         // set searchView this goes to fragment menu
 /*        MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -124,8 +116,6 @@ public class MainActivity extends AppCompatActivity {
         });
 */
 
-        // configure Log in / Log out button
-
         return true;
     }
 
@@ -142,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //------------UI details---------------//
     @Override
     public void onBackPressed() {
         if (mLastBackPressTime + TWO_BACK_PRESSES_INTERVAL > System.currentTimeMillis()) {
@@ -154,7 +143,12 @@ public class MainActivity extends AppCompatActivity {
         mLastBackPressTime = System.currentTimeMillis();
     }
 
-    //-------- Helpers --------//
+    //-------- authorization --------//
+
+    private String loadToken() {
+        SharedPreferences sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
+        return sharedPreferences.getString("token", null);
+    }
 
     private void clearPreferences() {
         sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
@@ -162,6 +156,5 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
         editor.apply();
     }
-
 
 }

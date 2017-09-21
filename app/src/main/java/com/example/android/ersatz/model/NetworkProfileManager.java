@@ -23,7 +23,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
          */
         void onProfileFetched(Profile profile);
 
-        void onErrorOccured(String message);
+        void onErrorOccurred(String message);
     }
 
     private ItWeekService mClient;
@@ -99,7 +99,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
 
     private void notifyError(String message) {
         for (NetworkProfileManagerListener listener : getListeners()) {
-            listener.onErrorOccured(message);
+            listener.onErrorOccurred(message);
         }
     }
 
