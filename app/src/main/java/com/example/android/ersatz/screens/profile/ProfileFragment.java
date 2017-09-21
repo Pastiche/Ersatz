@@ -1,12 +1,17 @@
 package com.example.android.ersatz.screens.profile;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
@@ -18,25 +23,23 @@ import java.util.List;
 
 // TODO: ask, what the fuck is 2 ids??
 // TODO: what to do if my token got wrecked?
-// TODO: make menu part of the view
+// TODO: make menu part of the view (?)
+// TODO: implements dagger 2
 
 public class ProfileFragment extends Fragment implements
         ProfileView.ProfileViewListener,
         NetworkProfileManager.NetworkProfileManagerListener {
 
-    /**
-     * This constant should be used as a key in a Bundle passed to this fragment as an argument
-     * at creation time. This key should correspond to the ID of the particular profile
-     * which details will be shown in this fragment
-     */
-    public static final String ARG_PROFILE_ID = "arg_profile_id";
-
     private NetworkProfileManager mNetworkManager;
     private ProfileViewImpl mView;
 
-    private String mProfileId;
-
     public ProfileFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -58,6 +61,7 @@ public class ProfileFragment extends Fragment implements
     public void onStart() {
         super.onStart();
         mNetworkManager.registerListener(this);
+        mNetworkManager.fetchMyProfile();
     }
 
     @Override
@@ -67,8 +71,8 @@ public class ProfileFragment extends Fragment implements
     }
 
     @Override
-    public void onShowQrCodeClick() {
-        mNetworkManager.fetchMyProfile();
+    public void onEditClick() {
+
     }
 
     @Override
@@ -77,15 +81,32 @@ public class ProfileFragment extends Fragment implements
     }
 
     @Override
-    public void onProfilesFetched(Profile profile) {
+    public void onProfileFetched(Profile profile) {
         mView.bindProfile(profile);
     }
 
     @Override
     public void onErrorOccured(String message) {
-
+        Toast.makeText(this.getContext(), message, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+/*        MenuItem qrCodeButton = menu.add(Menu.NONE, Menu.NONE, Menu.CATEGORY_SECONDARY, "QR-code");*/
+        inflater.inflate(R.menu.menu_profile, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.qr_button:
+                Toast.makeText(this.getContext(), "QR-code showing...", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return this.getActivity().onOptionsItemSelected(item);
+        }
+    }
 
     //<editor-fold desc="dummy profile">
     private Profile makeDummyProfile() {

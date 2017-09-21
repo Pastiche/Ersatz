@@ -4,15 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 
-import com.example.android.ersatz.entities.AuthBody;
-import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
-import com.example.android.ersatz.entities.TokenBody;
 import com.example.android.ersatz.network.ItWeekApi;
 import com.example.android.ersatz.network.ItWeekService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +21,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
          *
          * @param profile a list of fetched profiles; will never be null
          */
-        void onProfilesFetched(Profile profile);
+        void onProfileFetched(Profile profile);
 
         void onErrorOccured(String message);
     }
@@ -99,7 +93,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
 
     private void notifyProfileFetched(final Profile profile) {
         for (NetworkProfileManagerListener listener : getListeners()) {
-            listener.onProfilesFetched(profile);
+            listener.onProfileFetched(profile);
         }
     }
 

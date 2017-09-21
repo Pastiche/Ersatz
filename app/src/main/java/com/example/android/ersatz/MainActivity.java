@@ -35,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
 
     SimpleFragmentPagerAdapter mAdapter;
-    /*    private PaginationAdapter adapter;*/
-    private SearchView searchView;
 
     @Bind(R.id.viewpager)
     ViewPager _viewPager;
@@ -89,15 +87,20 @@ public class MainActivity extends AppCompatActivity {
         // inflate menu
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        // set searchView
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        MenuItem logInItem = menu.findItem(R.id.signout_button);
+
+        logInItem.setTitle("Sign Out");
+
+        // set searchView this goes to fragment menu
+/*        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);*/
 
 /*        // if no results on the screen - focus on search view
         if (adapter.isEmpty())
             searchView.setIconified(false);*/
 
         // handle search queries
+/*
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -119,11 +122,9 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+*/
 
         // configure Log in / Log out button
-        MenuItem logInItem = menu.findItem(R.id.signout_button);
-
-        logInItem.setTitle("Sign Out");
 
         return true;
     }
@@ -132,11 +133,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.signout_button:
-
                 clearPreferences();
                 startSigninActivity();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -158,12 +157,10 @@ public class MainActivity extends AppCompatActivity {
     //-------- Helpers --------//
 
     private void clearPreferences() {
-
         sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
-
     }
 
 

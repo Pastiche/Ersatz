@@ -3,6 +3,8 @@ package com.example.android.ersatz.screens.profile.view;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,6 +16,9 @@ import com.example.android.ersatz.entities.Profile;
 /**
  * Created by Denis on 19.09.2017.
  */
+
+// TODO: should I use internal chash, or it's ok to load from db every time I rotate the phone
+// TODO: make initial visiblity of wrappers = GONE, and reveal them only if we have data
 
 public class ProfileViewImpl implements ProfileView {
 
@@ -46,7 +51,7 @@ public class ProfileViewImpl implements ProfileView {
     private void setOnClickListeners() {
         _fab.setOnClickListener(view -> {
             if (mListener != null) {
-                mListener.onShowQrCodeClick();
+                mListener.onEditClick();
             }
         });
     }

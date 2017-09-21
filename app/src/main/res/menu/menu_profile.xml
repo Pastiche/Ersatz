@@ -1,12 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- sign out -->
+    <!-- edit -->
     <item
-        android:menuCategory="container"
-        android:id="@+id/signout_button"
-        android:icon="@drawable/ic_sign_out"
-        android:title="@string/sign_out"
+        android:id="@+id/qr_button"
+        android:icon="@mipmap/ic_qr"
+        android:title="@string/qr_code"
         app:showAsAction="ifRoom|collapseActionView" />
 
 </menu>

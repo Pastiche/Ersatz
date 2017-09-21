@@ -7,7 +7,7 @@ import com.example.android.ersatz.screens.common.CommonView;
 public interface ProfileView extends CommonView {
 
     interface ProfileViewListener {
-        void onShowQrCodeClick();
+        void onEditClick();
         void onContactUrlClick(Contact contact);
     }
 
