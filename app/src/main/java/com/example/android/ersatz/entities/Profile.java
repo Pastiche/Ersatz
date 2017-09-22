@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+// TODO: fix bug that new user see Malugin Platon's acc
+// TODO: fix bug with NullPointerException when new user signs in after registration
+
 public class Profile {
 
     @SerializedName("user_id")

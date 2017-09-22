@@ -5,29 +5,23 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.android.ersatz.screens.auth.SigninActivity;
 import com.example.android.ersatz.navigation.SimpleFragmentPagerAdapter;
-import com.example.android.ersatz.screens.auth.SignupActivity;
-import com.example.android.ersatz.screens.search.PaginationAdapter;
+import com.example.android.ersatz.screens.common.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 // TODO: configure animation of the signin-signout transitions - it is slow
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
-    private static final int TWO_BACK_PRESSES_INTERVAL = 2000; // # milliseconds
     private long mLastBackPressTime;
 
     private SharedPreferences sharedPreferences;
@@ -41,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        buildComponent().inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -97,10 +92,10 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (_viewPager.getCurrentItem()) {
                     case 1:
-                        Toast.makeText(MainActivity.this, "TOASTY CONTACTS!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FragmentActivity.this, "TOASTY CONTACTS!", Toast.LENGTH_SHORT).show();
                         break;
                     case 2:
-                        Toast.makeText(MainActivity.this, "TOASTY SEARCH!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FragmentActivity.this, "TOASTY SEARCH!", Toast.LENGTH_SHORT).show();
                         break;
                     default:
                 }
@@ -139,20 +134,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Tap back button in order to exit", Toast.LENGTH_SHORT).show();
         }
         mLastBackPressTime = System.currentTimeMillis();
-    }
-
-    //-------- authorization --------//
-
-    private String loadToken() {
-        SharedPreferences sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
-        return sharedPreferences.getString("token", null);
-    }
-
-    private void clearPreferences() {
-        sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
     }
 
 }

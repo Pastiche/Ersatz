@@ -1,14 +1,18 @@
 package com.example.android.ersatz.model;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
+import android.support.v4.app.FragmentActivity;
 
+import com.example.android.ersatz.ErsatzApp;
+import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Profile;
-import com.example.android.ersatz.network.ErsatzApp;
 import com.example.android.ersatz.network.ItWeekService;
+import com.example.android.ersatz.screens.common.BaseActivity;
 
+import javax.inject.Inject;
+
+import butterknife.BindString;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,12 +31,24 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
         void onErrorOccurred(String message);
     }
 
-    private ItWeekService itWeekService;
-    private Activity mParentActivity;
+    private ItWeekService mItWeekService;
+    private ErsatzApp mErsatzApp;
+    private FragmentActivity mActivity;
+    private SharedPreferences mSharedPreferences;
 
-    public NetworkProfileManager(Activity parentActivity) {
-        mParentActivity = parentActivity;
-        itWeekService = ErsatzApp.get(parentActivity).getItWeekService();
+    @BindString(R.string.unknown_error_message)
+    String unknownErrorMessage;
+    @BindString(R.string.server_error_message)
+    String serverErrorMEssage;
+    @BindString(R.string.no_internet_message)
+    String noInternetMessage;
+
+    @Inject
+    public NetworkProfileManager(ItWeekService itWeekService,
+                                 SharedPreferences sharedPreferences, FragmentActivity activity) {
+        mItWeekService = itWeekService;
+        mSharedPreferences = sharedPreferences;
+        ButterKnife.bind(this, activity);
     }
 
 /*    public void fetchProfileById(final long id) {
@@ -40,15 +56,13 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
         List<Profile> result = extractSmsMessagesFromCursor(cursor);
         notifySmsMessagesFetched(result);
 
-
     }*/
 
     //-------- fetching data --------//
+
     public void fetchMyProfile() {
-
         String token = loadToken();
-
-        itWeekService.getMyProfile(token).enqueue(new Callback<Profile>() {
+        mItWeekService.getMyProfile(token).enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 handleResponse(response);
@@ -64,7 +78,6 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
     //-------- processing response --------//
 
     private void handleResponse(Response<Profile> response) {
-
         Profile result = response.body();
         checkResponseOrigin(response);
 
@@ -74,19 +87,18 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
                 notifyProfileFetched(result);
                 break;
             case 500:
-                notifyError("Server error");
+                notifyError(serverErrorMEssage);
                 break;
             default:
-                notifyError("Unknown error");
-
+                notifyError(unknownErrorMessage);
         }
     }
 
     private void handleFailure() {
-        String message = "Unknown error";
+        String message = unknownErrorMessage;
 
-        if (!isNetworkConnected())
-            message = "No Internet Connection";
+        if (!mErsatzApp.isNetworkConnected())
+            message = noInternetMessage;
 
         notifyError(message);
     }
@@ -117,13 +129,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
 
     //-------- Helpers --------//
 
-    private String loadToken() {
-        SharedPreferences sharedPreferences = mParentActivity.getSharedPreferences("authorization", Context.MODE_PRIVATE);
-        return sharedPreferences.getString("token", null);
-    }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) mParentActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
+    protected String loadToken() {
+        return mSharedPreferences.getString("token", null);
     }
 }

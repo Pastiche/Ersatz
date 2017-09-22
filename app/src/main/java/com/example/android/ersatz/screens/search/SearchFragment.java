@@ -7,9 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.ersatz.R;
+import com.example.android.ersatz.screens.common.BaseFragment;
 
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends BaseFragment {
 
     public SearchFragment() {
     }

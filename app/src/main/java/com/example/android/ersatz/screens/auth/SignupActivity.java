@@ -1,10 +1,7 @@
 package com.example.android.ersatz.screens.auth;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,22 +12,32 @@ import android.widget.Toast;
 
 import com.example.android.ersatz.MainActivity;
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.network.ErsatzApp;
+import com.example.android.ersatz.ErsatzApp;
+import com.example.android.ersatz.di.ControllerComponent;
+import com.example.android.ersatz.di.modules.ControllerModule;
 import com.example.android.ersatz.network.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.TokenBody;
+import com.example.android.ersatz.screens.common.BaseActivity;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends BaseActivity {
     private static final String TAG = "SignupActivity";
 
+    @Inject
     ItWeekService itWeekService;
-    private ProgressDialog progressDialog;
+    @Inject
+    ProgressDialog progressDialog;
+    @Inject
+    ErsatzApp ersatzApp;
 
     @Bind(R.id.input_account_name)
     EditText _accountNameText;
@@ -49,37 +56,67 @@ public class SignupActivity extends AppCompatActivity {
     @Bind(R.id.input_password_re_enter_wrapper)
     TextInputLayout _rePasswordTextWrapper;
 
-    // TODO: Deal with progressbar
-    // TODO: extract abstract method and interface (?) for signup and signin
+    @BindString(R.string.check_credentials)
+    String checkCredentialsMessage;
+    @BindString(R.string.success_message)
+    String successMessage;
+    @BindString(R.string.incorrect_name_or_pass_message)
+    String incorrectNameOrPassMessage;
+    @BindString(R.string.server_error_message)
+    String serverErrorMessage;
+    @BindString(R.string.unknown_error_message)
+    String unknownErrorMessage;
+    @BindString(R.string.no_internet_message)
+    String noInternetMessage;
+    @BindString(R.string.enter_account_name_message)
+    String enterAccountNameMessage;
+    @BindString(R.string.enter_pass_message)
+    String enterPasswordMessage;
+    @BindString(R.string.account_exists_message)
+    String accountExistsMessage;
+    @BindString(R.string.short_name_message)
+    String atleastThreeCharsMessage;
+    @BindString(R.string.short_password_message)
+    String shortPassMessage;
+    @BindString(R.string.pass_not_match_message)
+    String passNotMatchMessage;
+
+    // TODO: Deal with progressDialog
+    // TODO: extract abstract class and interface (?) for signup and signin
     // TODO: provide DI with Dagger 2
-    //
+    // TODO: deal with onBackPressedButton
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        buildComponent().inject(this);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_signup);
+
         ButterKnife.bind(this);
-        itWeekService = ErsatzApp.get(this).getItWeekService();
+
+        buildComponent();
+
         setOnClickListeners();
     }
 
-    public void signup() {
+    private void setOnClickListeners() {
+        _signupButton.setOnClickListener(v -> signup());
+        _signinLink.setOnClickListener(v -> startSigninActivity());
+    }
 
-        launchProgressDialog();
+    public void signup() {
+        progressDialog.show();
 
         if (!validate()) {
-            informSignupResult("Check credentials");
+            informSignupResult(checkCredentialsMessage);
         } else
             sendSignupRequest();
-
-
     }
 
     private void sendSignupRequest() {
-
         String accountName = collectAccountName();
         String password = collectPassword();
-
         AuthBody authBody = new AuthBody(accountName, password);
 
         itWeekService.signUp(authBody).enqueue(new Callback<TokenBody>() {
@@ -93,53 +130,40 @@ public class SignupActivity extends AppCompatActivity {
                 handleFailure();
             }
         });
-
     }
 
     private void handleResponse(Response<TokenBody> response) {
-
         TokenBody body = response.body();
         int code = response.code();
 
         switch (code) {
-
             case 200:
                 if (body.getToken() == null)
-                    informSignupResult("Account already exists");
-                    // TODO: ask for the list of errors ad handle them all
+                    informSignupResult(accountExistsMessage);
                 else
                     handleSuccess(body.getToken());
                 break;
             case 401:
-                informSignupResult("Incorrect account name or password");
+                informSignupResult(incorrectNameOrPassMessage);
                 break;
             case 500:
-                informSignupResult("Server error");
+                informSignupResult(serverErrorMessage);
                 break;
             default:
-                informSignupResult("Unknown error");
+                informSignupResult(unknownErrorMessage);
         }
     }
 
     private void handleSuccess(String token) {
-        informSignupResult("Success!");
+        informSignupResult(successMessage);
         storeToken(token);
         startMainActivity();
     }
 
-    private void storeToken(String token) {
-        SharedPreferences sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("token", token);
-        editor.apply();
-    }
-
     private void handleFailure() {
-        String message = "Unknown error";
-
-        if (!isNetworkConnected())
-            message = "No Internet Connection";
-
+        String message = unknownErrorMessage;
+        if (!ersatzApp.isNetworkConnected())
+            message = noInternetMessage;
         informSignupResult(message);
     }
 
@@ -174,7 +198,7 @@ public class SignupActivity extends AppCompatActivity {
         boolean valid = true;
 
         if (accountName.isEmpty() || accountName.length() < 3) {
-            _accountNameTextWrapper.setError("at least 3 characters");
+            _accountNameTextWrapper.setError(atleastThreeCharsMessage);
             valid = false;
         } else {
             _accountNameTextWrapper.setError(null);
@@ -188,7 +212,7 @@ public class SignupActivity extends AppCompatActivity {
         boolean valid = true;
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordTextWrapper.setError("between 4 and 10 alphanumeric characters");
+            _passwordTextWrapper.setError(shortPassMessage);
             valid = false;
         } else {
             _passwordTextWrapper.setError(null);
@@ -202,8 +226,11 @@ public class SignupActivity extends AppCompatActivity {
 
         boolean valid = true;
 
-        if (reEnterPassword.isEmpty() || reEnterPassword.length() < 4 || reEnterPassword.length() > 10 || !(reEnterPassword.equals(password))) {
-            _rePasswordTextWrapper.setError("Password does not match");
+        if (reEnterPassword.isEmpty()
+                || reEnterPassword.length() < 4
+                || reEnterPassword.length() > 10
+                || !(reEnterPassword.equals(password))) {
+            _rePasswordTextWrapper.setError(passNotMatchMessage);
             valid = false;
         } else {
             _rePasswordTextWrapper.setError(null);
@@ -213,28 +240,13 @@ public class SignupActivity extends AppCompatActivity {
 
     //------------UI profile_view---------------//
 
-    private void setOnClickListeners() {
-        _signupButton.setOnClickListener(v -> signup());
-        _signinLink.setOnClickListener(v -> startSigninActivity());
-    }
-
-    private void launchProgressDialog() {
-        constructProgressDialog();
-        progressDialog.show();
-    }
-
-    private void constructProgressDialog() {
-
-        progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Signing up...");
-
-    }
-
     public void informSignupResult(String message) {
-        Toast.makeText(SignupActivity.this, message, Toast.LENGTH_SHORT).show();
+        showMessage(message);
         progressDialog.dismiss();
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(SignupActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void addTransition() {
@@ -249,11 +261,6 @@ public class SignupActivity extends AppCompatActivity {
 
     private String collectPassword() {
         return _passwordText.getText().toString();
-    }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
     }
 
 }

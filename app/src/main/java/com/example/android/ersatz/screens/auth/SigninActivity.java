@@ -1,8 +1,6 @@
 package com.example.android.ersatz.screens.auth;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -13,15 +11,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.MainActivity;
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.di.DaggerSigninActivityComponent;
-import com.example.android.ersatz.di.SigninActivityComponent;
-import com.example.android.ersatz.di.modules.SigninActivityModule;
-import com.example.android.ersatz.network.ErsatzApp;
+import com.example.android.ersatz.di.ControllerComponent;
+import com.example.android.ersatz.di.modules.ControllerModule;
 import com.example.android.ersatz.network.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.TokenBody;
+import com.example.android.ersatz.screens.common.BaseActivity;
 
 import javax.inject.Inject;
 
@@ -32,27 +30,23 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// TODO: also, make a separate class for validation and that kind of things or keep it in the above class
-// TODO: optimize scopes like do I really need different Connectivity Managers in different activities?
 // TODO: manage all constants in one class, like: response_codes, preference_strings, base_url;
+// TODO: deal with the UPPER back button
 // TODO: ask for the list of errors ad handle them all
 // TODO: make name and pass at least 3 chars
 // TODO: hugely implement Butterknife
 
-public class SigninActivity extends AppCompatActivity {
+public class SigninActivity extends BaseActivity {
 
     private static final String TAG = "SigninActivity";
-    private static final int TWO_BACK_PRESSES_INTERVAL = 2000; // # milliseconds
     private long mLastBackPressTime;
 
-    @Inject
-    SigninActivityComponent signinActivityComponent;
     @Inject
     ItWeekService itWeekService;
     @Inject
     ProgressDialog progressDialog;
     @Inject
-    ConnectivityManager cm;
+    ErsatzApp ersatzApp;
 
     @Bind(R.id.input_account_name)
     EditText _accountNameText;
@@ -89,6 +83,7 @@ public class SigninActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        buildComponent().inject(this);
 
         setContentView(R.layout.activity_signin);
 
@@ -96,17 +91,7 @@ public class SigninActivity extends AppCompatActivity {
 
         buildComponent();
 
-        signinActivityComponent.injectSigninActivity(this);
-
         setOnClickListeners();
-    }
-
-    private void buildComponent() {
-        signinActivityComponent =
-                DaggerSigninActivityComponent.builder()
-                        .signinActivityModule(new SigninActivityModule(this))
-                        .ersatzAppComponent(ErsatzApp.get(this).getComponent())
-                        .build();
     }
 
     private void setOnClickListeners() {
@@ -169,16 +154,9 @@ public class SigninActivity extends AppCompatActivity {
         startMainActivity();
     }
 
-    private void storeToken(String token) {
-        SharedPreferences sharedPreferences = getSharedPreferences("authorization", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("token", token);
-        editor.apply();
-    }
-
     private void handleFailure() {
         String message = unknownErrorMessage;
-        if (!isNetworkConnected())
+        if (!ersatzApp.isNetworkConnected())
             message = noInternetMessage;
         informSigninResult(message);
     }
@@ -273,10 +251,6 @@ public class SigninActivity extends AppCompatActivity {
 
     private String collectPassword() {
         return _passwordText.getText().toString();
-    }
-
-    private boolean isNetworkConnected() {
-        return cm.getActiveNetworkInfo() != null;
     }
 
 }

@@ -14,25 +14,17 @@ public class ItWeekServiceModule {
 
     @Provides
     @ErsatzAppScope
-    public String baseUrl() {
-        // TODO: probably should extract this...
-        return "https://itweekandroiddemo.herokuapp.com/";
-    }
-
-    @Provides
-    @ErsatzAppScope
-    public GsonConverterFactory gsonConverterFactory() {
+    public GsonConverterFactory gsonFactory() {
         return GsonConverterFactory.create();
     }
 
     @Provides
     @ErsatzAppScope
-    public Retrofit retrofit(GsonConverterFactory gsonConverterFactory, OkHttpClient okHttpClient, String baseUrl) {
-
+    public Retrofit retrofit(GsonConverterFactory factory, OkHttpClient client) {
         return new Retrofit.Builder()
-                .addConverterFactory(gsonConverterFactory)
-                .client(okHttpClient)
-                .baseUrl(baseUrl)
+                .addConverterFactory(factory)
+                .client(client)
+                .baseUrl("https://itweekandroiddemo.herokuapp.com/")
                 .build();
     }
 

@@ -33,5 +33,10 @@
     <string name="enter_account_name_message">enter account name</string>
     <string name="enter_pass_message">enter password</string>
     <string name="pre_exit_message">Tap back button in order to exit</string>
-    <string name="signin_progress_message">Signing in...</string>
+    <string name="signin_progress_message">Signing in…</string>
+    <string name="signup_progress_message">Signing up...</string>
+    <string name="account_exists_message">Account already exists</string>
+    <string name="short_name_message">at least 3 characters</string>
+    <string name="short_password_message">between 4 and 10 alphanumeric characters</string>
+    <string name="pass_not_match_message">Password does not match</string>
 </resources>

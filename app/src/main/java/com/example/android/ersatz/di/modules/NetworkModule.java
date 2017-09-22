@@ -1,6 +1,8 @@
 package com.example.android.ersatz.di.modules;
 
-import android.content.Context;
+import com.example.android.ersatz.ErsatzApp;
+
+import android.net.ConnectivityManager;
 
 import com.example.android.ersatz.di.Scopes.ErsatzAppScope;
 
@@ -12,13 +14,19 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-@Module(includes = ContextModule.class)
+@Module(includes = ErsatzAppModule.class)
 public class NetworkModule {
 
     @Provides
     @ErsatzAppScope
-    public File file(Context context) {
-        return new File(context.getCacheDir(), "okHttp_cache");
+    public ConnectivityManager connectivityManager(ErsatzApp ersatzApp) {
+        return (ConnectivityManager) ersatzApp.getSystemService(ErsatzApp.CONNECTIVITY_SERVICE);
+    }
+
+    @Provides
+    @ErsatzAppScope
+    public File file(ErsatzApp ersatzApp) {
+        return new File(ersatzApp.getCacheDir(), "okHttp_cache");
     }
 
     @Provides

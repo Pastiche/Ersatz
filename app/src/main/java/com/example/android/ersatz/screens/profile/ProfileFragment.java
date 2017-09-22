@@ -2,7 +2,6 @@ package com.example.android.ersatz.screens.profile;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,27 +10,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
-import com.example.android.ersatz.network.ErsatzApp;
+import com.example.android.ersatz.screens.common.BaseFragment;
 import com.example.android.ersatz.screens.profile.view.ProfileView;
 import com.example.android.ersatz.screens.profile.view.ProfileViewImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: ask, what the fuck is 2 ids??
-// TODO: what to do if my token got wrecked?
-// TODO: make menu part of the view (?)
-// TODO: implements dagger 2
+import javax.inject.Inject;
 
-public class ProfileFragment extends Fragment implements
+// TODO: ask, what the fuck is 2 ids??
+// TODO: make menu part of the view (?)
+// TODO: implement dagger 2
+
+public class ProfileFragment extends BaseFragment implements
         ProfileView.ProfileViewListener,
         NetworkProfileManager.NetworkProfileManagerListener {
 
-    private NetworkProfileManager mNetworkManager;
+    @Inject
+    NetworkProfileManager mNetworkManager;
+    @Inject
+    ErsatzApp ersatzApp;
+
     private ProfileViewImpl mView;
 
     public ProfileFragment() {
@@ -40,6 +45,7 @@ public class ProfileFragment extends Fragment implements
     //-------- lifecycle --------//
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        buildComponent().inject(this);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -47,12 +53,9 @@ public class ProfileFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // initialization
-        mNetworkManager = new NetworkProfileManager(this.getActivity());
-        mView = new ProfileViewImpl(inflater, container);
-        // connect controller and view
-        mView.setListener(this);
 
+        mView = new ProfileViewImpl(inflater, container);
+        mView.setListener(this);
         return mView.getRootView();
     }
 
