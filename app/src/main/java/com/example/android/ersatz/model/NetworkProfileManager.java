@@ -7,7 +7,6 @@ import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.network.ItWeekService;
-import com.example.android.ersatz.screens.common.BaseActivity;
 
 import javax.inject.Inject;
 
@@ -39,7 +38,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
     @BindString(R.string.unknown_error_message)
     String unknownErrorMessage;
     @BindString(R.string.server_error_message)
-    String serverErrorMEssage;
+    String serverErrorMessage;
     @BindString(R.string.no_internet_message)
     String noInternetMessage;
 
@@ -62,7 +61,22 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
 
     public void fetchMyProfile() {
         String token = loadToken();
-        mItWeekService.getMyProfile(token).enqueue(new Callback<Profile>() {
+        mItWeekService.getMyProfile(token, true, true).enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                handleResponse(response);
+            }
+
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                handleFailure();
+            }
+        });
+    }
+
+    public void updateMyProfile(Profile profile) {
+        String token = loadToken();
+        mItWeekService.updateProfile(profile, token, false, false).enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 handleResponse(response);
@@ -87,7 +101,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
                 notifyProfileFetched(result);
                 break;
             case 500:
-                notifyError(serverErrorMEssage);
+                notifyError(serverErrorMessage);
                 break;
             default:
                 notifyError(unknownErrorMessage);
@@ -105,11 +119,11 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
 
     private void checkResponseOrigin(Response<Profile> response) {
         if (response.raw().cacheResponse() != null) {
-            System.out.println("okh: response was served from cache");
+            System.out.println("response was served from cache (okhttp)");
         }
 
         if (response.raw().networkResponse() != null) {
-            System.out.println("okh: response was served from server");
+            System.out.println("okh: response was served from server (okhttp)");
         }
     }
 

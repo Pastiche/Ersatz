@@ -1,19 +1,22 @@
-package com.example.android.ersatz;
+package com.example.android.ersatz.screens.common.controllers;
+
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.android.ersatz.R;
 import com.example.android.ersatz.screens.auth.SigninActivity;
 import com.example.android.ersatz.navigation.SimpleFragmentPagerAdapter;
-import com.example.android.ersatz.screens.common.BaseActivity;
+import com.example.android.ersatz.screens.common.views.BaseViewImpl;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,10 +26,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity {
 
     private long mLastBackPressTime;
-
-    private SharedPreferences sharedPreferences;
-
-    SimpleFragmentPagerAdapter mAdapter;
+    private SimpleFragmentPagerAdapter mAdapter;
+    private BaseViewImpl mView;
 
     @Bind(R.id.viewpager)
     ViewPager _viewPager;
@@ -37,17 +38,22 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         buildComponent().inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContent();
         ButterKnife.bind(this);
 
-        String token = loadToken();
 
+        String token = loadToken();
         if (token == null)
             startSigninActivity();
         else {
             setTabSwipeNavigation();
             setToolBar();
         }
+    }
+
+    private void setContent() {
+        mView = new BaseViewImpl(this, null);
+        setContentView(mView.getRootView());
     }
 
     private void startSigninActivity() {
@@ -76,39 +82,6 @@ public class MainActivity extends BaseActivity {
         MenuItem signOutItem = menu.findItem(R.id.signout_button);
         signOutItem.setTitle("Sign Out");
 
-        // set searchView this goes to fragment menu
-/*        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);*/
-
-/*        // if no results on the screen - focus on search view
-        if (adapter.isEmpty())
-            searchView.setIconified(false);*/
-
-        // handle search queries
-/*
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                switch (_viewPager.getCurrentItem()) {
-                    case 1:
-                        Toast.makeText(FragmentActivity.this, "TOASTY CONTACTS!", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        Toast.makeText(FragmentActivity.this, "TOASTY SEARCH!", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-*/
-
         return true;
     }
 
@@ -135,5 +108,4 @@ public class MainActivity extends BaseActivity {
         }
         mLastBackPressTime = System.currentTimeMillis();
     }
-
 }

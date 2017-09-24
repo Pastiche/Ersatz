@@ -1,14 +1,19 @@
 package com.example.android.ersatz.di.modules;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.R;
+import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
 import com.example.android.ersatz.network.ItWeekService;
+import com.example.android.ersatz.screens.profile.view.ProfileViewImpl;
 
 import dagger.Module;
 import dagger.Provides;

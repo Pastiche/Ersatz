@@ -1,21 +1,22 @@
 <!-- Layout for the main screen -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".FragmentActivity">
+    tools:context=".screens.common.controllers.MainActivity">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="fixed"
         android:background="@color/primary"
-        app:tabTextColor="#A8A19E"
+        app:tabIndicatorColor="@android:color/white"
+        app:tabMode="fixed"
         app:tabSelectedTextColor="#FFFFFF"
-        app:tabIndicatorColor="@android:color/white" />
+        app:tabTextColor="#A8A19E" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

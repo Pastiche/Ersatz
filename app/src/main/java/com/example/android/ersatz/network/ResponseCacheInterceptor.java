@@ -1,7 +1,12 @@
 package com.example.android.ersatz.network;
 
 import java.io.IOException;
+
 import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import timber.log.Timber;
 
 /**
  * Interceptor to cache data and maintain it for a minute.
@@ -10,11 +15,25 @@ import okhttp3.Interceptor;
  * the response is retrieved from cache.
  */
 public class ResponseCacheInterceptor implements Interceptor {
+
+    public ResponseCacheInterceptor() {
+
+    }
+
     @Override
-    public okhttp3.Response intercept(Chain chain) throws IOException {
-        okhttp3.Response originalResponse = chain.proceed(chain.request());
-        return originalResponse.newBuilder()
-                .header("Cache-Control", "public, max-age=" + 60)
-                .build();
+    public Response intercept(Chain chain) throws IOException {
+
+        Request request = chain.request();
+        if (Boolean.valueOf(request.header("ApplyResponseCache (okhttp)"))) {
+            Timber.i("Response cache applied");
+            Response originalResponse = chain.proceed(chain.request());
+            return originalResponse.newBuilder()
+                    .removeHeader("ApplyResponseCache")
+                    .header("Cache-Control", "public, max-age=" + 60)
+                    .build();
+        } else {
+            Timber.i("Response cache not applied (okhttp)");
+            return chain.proceed(chain.request());
+        }
     }
 }

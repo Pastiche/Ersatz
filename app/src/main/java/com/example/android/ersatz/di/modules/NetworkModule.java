@@ -5,6 +5,8 @@ import com.example.android.ersatz.ErsatzApp;
 import android.net.ConnectivityManager;
 
 import com.example.android.ersatz.di.Scopes.ErsatzAppScope;
+import com.example.android.ersatz.network.OfflineResponseCacheInterceptor;
+import com.example.android.ersatz.network.ResponseCacheInterceptor;
 
 import java.io.File;
 
@@ -19,33 +21,50 @@ public class NetworkModule {
 
     @Provides
     @ErsatzAppScope
-    public ConnectivityManager connectivityManager(ErsatzApp ersatzApp) {
+    ConnectivityManager connectivityManager(ErsatzApp ersatzApp) {
         return (ConnectivityManager) ersatzApp.getSystemService(ErsatzApp.CONNECTIVITY_SERVICE);
     }
 
     @Provides
     @ErsatzAppScope
-    public File file(ErsatzApp ersatzApp) {
+    OfflineResponseCacheInterceptor offlineResponseCacheInterceptor(ConnectivityManager connectivityManager) {
+        return new OfflineResponseCacheInterceptor(connectivityManager);
+    }
+
+    @Provides
+    @ErsatzAppScope
+    File file(ErsatzApp ersatzApp) {
         return new File(ersatzApp.getCacheDir(), "okHttp_cache");
     }
 
     @Provides
     @ErsatzAppScope
-    public Cache cache(File cacheFile) {
+    Cache cache(File cacheFile) {
         return new Cache(cacheFile, 10 * 1024 * 1024); // 10Mb cache
     }
 
     @Provides
     @ErsatzAppScope
-    public HttpLoggingInterceptor httpLoggingInterceptor() {
+    HttpLoggingInterceptor httpLoggingInterceptor() {
         return new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY);
     }
 
     @Provides
     @ErsatzAppScope
-    public OkHttpClient okHttpClient(HttpLoggingInterceptor logger, Cache cache) {
+    ResponseCacheInterceptor responseCacheInterceptor() {
+        return new ResponseCacheInterceptor();
+    }
+
+
+    @Provides
+    @ErsatzAppScope
+    OkHttpClient okHttpClient(ResponseCacheInterceptor responseCacheInterceptor,
+                              OfflineResponseCacheInterceptor offlineResponseCacheInterceptor,
+                              HttpLoggingInterceptor logger, Cache cache) {
         return new OkHttpClient.Builder()
+                .addNetworkInterceptor(responseCacheInterceptor)
+                .addInterceptor(offlineResponseCacheInterceptor)
                 .addInterceptor(logger)
                 .cache(cache)
                 .build();

@@ -4,21 +4,18 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.ersatz.MainActivity;
+import com.example.android.ersatz.screens.common.controllers.MainActivity;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.ErsatzApp;
-import com.example.android.ersatz.di.ControllerComponent;
-import com.example.android.ersatz.di.modules.ControllerModule;
 import com.example.android.ersatz.network.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.TokenBody;
-import com.example.android.ersatz.screens.common.BaseActivity;
+import com.example.android.ersatz.screens.common.controllers.BaseActivity;
 
 import javax.inject.Inject;
 
@@ -119,7 +116,7 @@ public class SignupActivity extends BaseActivity {
         String password = collectPassword();
         AuthBody authBody = new AuthBody(accountName, password);
 
-        itWeekService.signUp(authBody).enqueue(new Callback<TokenBody>() {
+        itWeekService.signUp(authBody, false, false).enqueue(new Callback<TokenBody>() {
             @Override
             public void onResponse(Call<TokenBody> call, Response<TokenBody> response) {
                 handleResponse(response);
@@ -243,10 +240,6 @@ public class SignupActivity extends BaseActivity {
     public void informSignupResult(String message) {
         showMessage(message);
         progressDialog.dismiss();
-    }
-
-    private void showMessage(String message) {
-        Toast.makeText(SignupActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void addTransition() {

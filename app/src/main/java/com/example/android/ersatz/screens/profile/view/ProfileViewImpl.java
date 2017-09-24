@@ -1,32 +1,35 @@
 package com.example.android.ersatz.screens.profile.view;
 
+import android.app.AlertDialog;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
+import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 
-/**
- * Created by Denis on 19.09.2017.
- */
-
-// TODO: should I use internal chash, or it's ok to load from db every time I rotate the phone
 // TODO: make initial visiblity of wrappers = GONE, and reveal them only if we have data
+// TODO: make different listener for onEmailClick event
+// TODO: replace "profile" with "public" in qr-code
+// TODO: make pleasantly looking style
 
 public class ProfileViewImpl implements ProfileView {
 
     private View mRootView;
-
+    private BaseFragment mFragment;
     private ProfileViewListener mListener;
 
-    private FloatingActionButton _fab;
+    private AlertDialog.Builder _qrDialog;
+    private ImageView _qrCodeImageView;
+    private FloatingActionButton _qrCodeFab;
+    private FloatingActionButton _editFab;
     private TextView _firstName;
     private TextView _middleName;
     private TextView _lastName;
@@ -39,25 +42,17 @@ public class ProfileViewImpl implements ProfileView {
     private TextView _instagram;
     private TextView _linkedin;
 
-
-    public ProfileViewImpl(LayoutInflater inflater, ViewGroup container) {
+    public ProfileViewImpl(LayoutInflater inflater, ViewGroup container, BaseFragment parentFragment) {
         mRootView = inflater.inflate(R.layout.profile_view, container, false);
+        mFragment = parentFragment;
 
         initialize();
         setOnClickListeners();
-
-    }
-
-    private void setOnClickListeners() {
-        _fab.setOnClickListener(view -> {
-            if (mListener != null) {
-                mListener.onEditClick();
-            }
-        });
     }
 
     private void initialize() {
-        _fab = (FloatingActionButton) mRootView.findViewById(R.id.fab);
+        _qrCodeFab = (FloatingActionButton) mRootView.findViewById(R.id.qr_fab);
+        _editFab = (FloatingActionButton) mRootView.findViewById(R.id.edit_fab);
         _firstName = (TextView) mRootView.findViewById(R.id.first_name);
         _middleName = (TextView) mRootView.findViewById(R.id.middle_name);
         _lastName = (TextView) mRootView.findViewById(R.id.last_name);
@@ -71,15 +66,44 @@ public class ProfileViewImpl implements ProfileView {
         _linkedin = (TextView) mRootView.findViewById(R.id.linkedin);
     }
 
+    private void setOnClickListeners() {
+        _qrCodeFab.setOnClickListener(view -> {
+            if (mListener != null) {
+                mListener.onShowQrCodeBtnClick();
+            }
+        });
+
+        _editFab.setOnClickListener(view -> {
+            if (mListener != null) {
+                mListener.onEditClick();
+            }
+        });
+    }
+
     //--------Binding profile--------//
 
     @Override
     public void bindProfile(Profile profile) {
+        bindNames(profile);
+        bindContacts(profile);
+        setOnFabClickListener();
+    }
 
+    private void setOnFabClickListener() {
+        _qrCodeFab.setOnClickListener(view -> {
+            if (mListener != null) {
+                mListener.onShowQrCodeBtnClick();
+            }
+        });
+    }
+
+    private void bindNames(Profile profile) {
         _firstName.setText(profile.getFirstName());
         _lastName.setText(profile.getLastName());
         _middleName.setText(profile.getMiddleName());
+    }
 
+    private void bindContacts(Profile profile) {
         bindContactToView(profile.getFb(), _fb);
         bindContactToView(profile.getVk(), _vk);
         bindContactToView(profile.getEmail(), _email);
@@ -88,7 +112,6 @@ public class ProfileViewImpl implements ProfileView {
         bindContactToView(profile.getTwitter(), _twitter);
         bindContactToView(profile.getLinkedin(), _linkedin);
         bindContactToView(profile.getInstagram(), _instagram);
-
     }
 
     private void bindContactToView(Contact contact, TextView view) {
@@ -115,6 +138,28 @@ public class ProfileViewImpl implements ProfileView {
 
     private void hideContainer(TextView view) {
         ((View) view.getParent()).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showQrCode(Bitmap qrCodeImage) {
+        // TODO: get rid of border
+        buildQrDialogWithImage(qrCodeImage);
+        _qrDialog.show();
+    }
+
+    private void buildQrDialogWithImage(Bitmap qrCodeImage) {
+        buildQrCodeImageView(qrCodeImage);
+        buildDialog();
+        _qrDialog.setView(_qrCodeImageView);
+    }
+
+    private void buildQrCodeImageView(Bitmap qrCodeImage) {
+        _qrCodeImageView = new ImageView(mFragment.getContext());
+        _qrCodeImageView.setImageBitmap(qrCodeImage);
+    }
+
+    private void buildDialog() {
+        _qrDialog = new AlertDialog.Builder(mFragment.getContext(), R.style.AppTheme_Dark_Dialog);
     }
 
     //--------Helpers--------//

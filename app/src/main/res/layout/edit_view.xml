@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="56dp">
+
+        <!-- first name -->
+        <EditText
+            android:id="@+id/input_first_name"
+            style="@style/text_input"
+            android:hint="@string/first_name" />
+
+        <!-- middle name -->
+        <EditText
+            android:id="@+id/input_middle_name"
+            style="@style/text_input"
+            android:hint="@string/middle_name" />
+
+
+        <!-- last name -->
+        <EditText
+            android:id="@+id/input_last_name"
+            style="@style/text_input"
+            android:hint="@string/last_name" />
+
+        <!-- email -->
+        <EditText
+            android:id="@+id/input_email"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_email"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress" />
+
+        <!-- skype -->
+        <EditText
+            android:id="@+id/input_skype"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_skype"
+            android:hint="@string/skype"
+            android:inputType="none" />
+
+        <!-- github -->
+        <EditText
+            android:id="@+id/input_github"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_github"
+            android:hint="@string/github"
+            android:inputType="textUri" />
+
+        <!-- vk -->
+        <EditText
+            android:id="@+id/input_vk"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_vk"
+            android:hint="@string/vk"
+            android:inputType="textUri" />
+
+        <!-- fb -->
+        <EditText
+            android:id="@+id/input_fb"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_fb"
+            android:hint="@string/fb"
+            android:inputType="textUri" />
+
+        <!-- twitter -->
+        <EditText
+            android:id="@+id/input_twitter"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_twitter"
+            android:hint="@string/twitter"
+            android:inputType="textUri" />
+
+        <!-- instagram -->
+        <EditText
+            android:id="@+id/input_instagram"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_instagram"
+            android:hint="@string/instagram"
+            android:inputType="textUri" />
+
+        <!-- linkedin -->
+        <EditText
+            android:id="@+id/input_linkedin"
+            style="@style/text_input"
+            android:drawableStart="@mipmap/ic_linkedin"
+            android:hint="@string/linkedin"
+            android:inputType="textUri" />
+
+        <Button
+            android:id="@+id/save_btn"
+            style="@style/button"
+            android:text="@string/save" />
+
+    </LinearLayout>
+</ScrollView>

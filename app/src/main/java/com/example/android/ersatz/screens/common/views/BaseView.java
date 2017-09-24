@@ -1,9 +1,9 @@
-package com.example.android.ersatz.screens.common;
+package com.example.android.ersatz.screens.common.views;
 
 import android.os.Bundle;
 import android.view.View;
 
-public interface CommonView {
+public interface BaseView {
 
     View getRootView();
 

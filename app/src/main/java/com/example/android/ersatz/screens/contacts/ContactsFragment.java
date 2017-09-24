@@ -1,14 +1,13 @@
 package com.example.android.ersatz.screens.contacts;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.screens.common.BaseFragment;
+import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 
 
 public class ContactsFragment extends BaseFragment {

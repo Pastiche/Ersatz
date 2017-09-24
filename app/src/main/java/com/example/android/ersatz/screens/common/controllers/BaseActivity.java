@@ -1,7 +1,8 @@
-package com.example.android.ersatz.screens.common;
+package com.example.android.ersatz.screens.common.controllers;
 
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.di.ControllerComponent;
@@ -38,4 +39,7 @@ public class BaseActivity extends AppCompatActivity {
         preferencesEditor.apply();
     }
 
+    protected void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
 }

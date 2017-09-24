@@ -16,23 +16,38 @@ public interface ItWeekService {
 
     @Headers("Content-type: application/json")
     @POST("signup")
-    Call<TokenBody> signUp(@Body AuthBody authBody);
+    Call<TokenBody> signUp(@Body AuthBody authBody,
+                           @Header("ApplyOfflineCache") boolean offlineCache,
+                           @Header("ApplyResponseCache") boolean responseCache);
 
     @Headers("Content-type: application/json")
     @POST("signin")
-    Call<TokenBody> signIn(@Body AuthBody authBody);
+    Call<TokenBody> signIn(@Body AuthBody authBody,
+                           @Header("ApplyOfflineCache") boolean offlineCache,
+                           @Header("ApplyResponseCache") boolean responseCache);
 
     @GET("profile")
-    Call<Profile> getMyProfile(@Header("Authorization") String token);
+    Call<Profile> getMyProfile(@Header("Authorization") String token,
+                               @Header("ApplyOfflineCache") boolean offlineCache,
+                               @Header("ApplyResponseCache") boolean responseCache);
 
     @Headers("Content-type: application/json")
-    @GET("public/{page_id}")
+    @GET("profule/{page_id}")
     Call<Profile> getProfileById(@Path("page_id") String pageId,
-                                 @Header("Authorisation") String token);
+                                 @Header("Authorisation") String token,
+                                 @Header("ApplyOfflineCache") boolean offlineCache,
+                                 @Header("ApplyResponseCache") boolean responseCache);
+
+    @Headers("Content-type: application/json")
+    @POST("profule")
+    Call<Profile> updateProfile(@Body Profile profile,
+                                @Header("Authorization") String token,
+                                @Header("ApplyOfflineCache") boolean offlineCache,
+                                @Header("ApplyResponseCache") boolean responseCache);
 
 
     // TODO: handle out of boundaries exception
     // TODO: handle no results exception
-    // TODO: handle "such name exists exception"
+    // TODO: get rid of headers duplication
 
 }

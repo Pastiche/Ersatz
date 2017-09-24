@@ -1,13 +1,12 @@
 package com.example.android.ersatz.screens.search;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.screens.common.BaseFragment;
+import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 
 
 public class SearchFragment extends BaseFragment {
