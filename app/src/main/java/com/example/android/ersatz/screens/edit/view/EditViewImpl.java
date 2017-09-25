@@ -7,12 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.screens.common.controllers.BaseActivity;
-import com.example.android.ersatz.screens.common.controllers.BaseFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditViewImpl implements EditView {
     private View mRootView;
@@ -31,6 +34,10 @@ public class EditViewImpl implements EditView {
     private EditText _instagram;
     private EditText _linkedin;
     private Button _saveButton;
+
+    String firstName;
+    String lastName;
+    String email;
 
     public EditViewImpl(BaseActivity activity, ViewGroup container) {
         mRootView = LayoutInflater.from(activity).inflate(R.layout.edit_view, container);
@@ -98,14 +105,83 @@ public class EditViewImpl implements EditView {
 
     private void sendUpdateRequest() {
 
-        // if(!validate) {error message}
-        // else: gather all texts, make new profile object
-        // pass new profile back to activity through callback
+        // TODO: is it ok to send empty bodies??
+        // TODO: Refactor this mess
 
-        if (mListener != null) {
-            mListener.onSaveClick();
+        firstName = _firstName.getText().toString();
+        lastName = _lastName.getText().toString();
+        email = _email.getText().toString();
+        String middleName = _middleName.getText().toString();
+        String skype = _skype.getText().toString();
+        String github = _github.getText().toString();
+        String vk = _vk.getText().toString();
+        String fb = _fb.getText().toString();
+        String twitter = _twitter.getText().toString();
+        String instagram = _instagram.getText().toString();
+        String linkedin = _linkedin.getText().toString();
+
+        if (!validate())
+            Toast.makeText(mActivity, R.string.check_credentials, Toast.LENGTH_SHORT).show();
+        else {
+
+            List<Contact> contacts = new ArrayList<>();
+            contacts.add(new Contact(Contact.CONTACT_TYPE_EMAIL, email));
+            contacts.add(new Contact(Contact.CONTACT_TYPE_SKYPE, skype));
+            contacts.add(new Contact(Contact.CONTACT_TYPE_GITHUB, github));
+            contacts.add(new Contact(Contact.CONTACT_TYPE_VK, vk));
+            contacts.add(new Contact(Contact.CONTACT_TYPE_FB, fb));
+            contacts.add(new Contact(Contact.CONTACT_TYPE_TWITTER, twitter));
+            contacts.add(new Contact(Contact.CONTACT_TYPE_INSTAGRAM, instagram));
+            contacts.add(new Contact(Contact.CONTACT_TYPE_LINKEDIN, linkedin));
+
+            Profile updatedProfile = new Profile(firstName, middleName, lastName, contacts);
+
+            if (mListener != null) {
+                mListener.onSaveClick(updatedProfile);
+            }
         }
+    }
 
+    private boolean validate() {
+        return validateFirstName() &&
+                validateLastName() &&
+                validateEmail();
+    }
+
+    private boolean validateFirstName() {
+        boolean valid = true;
+
+        if (firstName.isEmpty() || firstName.length() < 3) {
+            _firstName.setError(mActivity.getString(R.string.short_name_message));
+            valid = false;
+        } else {
+            _firstName.setError(null);
+        }
+        return valid;
+    }
+
+    private boolean validateLastName() {
+        boolean valid = true;
+
+        if (lastName.isEmpty() || lastName.length() < 3) {
+            _lastName.setError(mActivity.getString(R.string.short_name_message));
+            valid = false;
+        } else {
+            _lastName.setError(null);
+        }
+        return valid;
+    }
+
+    private boolean validateEmail() {
+        boolean valid = true;
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _email.setError(mActivity.getString(R.string.enter_valid_email_message));
+            valid = false;
+        } else {
+            _email.setError(null);
+        }
+        return valid;
     }
 
     //--------Helpers--------//

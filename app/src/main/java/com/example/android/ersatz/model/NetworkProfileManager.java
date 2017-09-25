@@ -8,6 +8,8 @@ import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.network.ItWeekService;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindString;
@@ -50,14 +52,24 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
         ButterKnife.bind(this, activity);
     }
 
-/*    public void fetchProfileById(final long id) {
 
-        List<Profile> result = extractSmsMessagesFromCursor(cursor);
-        notifySmsMessagesFetched(result);
-
-    }*/
 
     //-------- fetching data --------//
+
+    public void fetchProfileById(final String pageId) {
+        String token = loadToken();
+        mItWeekService.getProfileById(pageId, token, true, false).enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                handleResponse(response);
+            }
+
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                handleFailure();
+            }
+        });
+    }
 
     public void fetchMyProfile() {
         String token = loadToken();

@@ -49,14 +49,18 @@ public class EditActivity extends BaseActivity implements
         mNetworkManager.unregisterListener(this);
     }
 
+    // TODO: allow it only if there is internet
     @Override
-    public void onSaveClick() {
-        Toast.makeText(this, "SAVING!", Toast.LENGTH_SHORT).show();
+    public void onSaveClick(Profile profileToUpdate) {
+        mNetworkManager.updateMyProfile(profileToUpdate);
+        finish();
+        showMessage("Saved");
     }
 
     @Override
     public void onProfileFetched(Profile profile) {
-        showMessage("Saved");
+        mProfile = profile;
+        mView.bindProfile(mProfile);
     }
 
     @Override

@@ -71,7 +71,7 @@ public class ProfileFragment extends BaseFragment implements
 
     //-------- view callbacks --------//
 
-    // TODO: this method should handle editing, not menu item
+    // TODO: allow to edit only if there is internet (ALSO DO THIS FOR THE SAVE BUTTON)
     @Override
     public void onEditClick() {
         startEditActivity();

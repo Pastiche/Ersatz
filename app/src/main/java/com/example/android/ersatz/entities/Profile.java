@@ -108,14 +108,11 @@ public class Profile {
         return getSpecificContact(Contact.CONTACT_TYPE_EMAIL);
     }
 
-    public Profile(String userId, String firstName, String lastName, String middleName, List<Contact> contacts, String pageId, String pageUrl) {
-        this.userId = userId;
+    public Profile(String firstName, String lastName, String middleName, List<Contact> contacts) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
         this.contacts = contacts;
-        this.pageId = pageId;
-        this.pageUrl = pageUrl;
     }
 
 

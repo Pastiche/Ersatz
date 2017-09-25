@@ -6,6 +6,7 @@ import com.example.android.ersatz.screens.auth.SigninActivity;
 import com.example.android.ersatz.screens.auth.SignupActivity;
 import com.example.android.ersatz.screens.edit.EditActivity;
 import com.example.android.ersatz.screens.profile.ProfileFragment;
+import com.example.android.ersatz.screens.search.SearchFragment;
 
 import dagger.Subcomponent;
 
@@ -21,5 +22,7 @@ public interface ControllerComponent {
     void inject(ProfileFragment profileFragment);
 
     void inject(EditActivity editActivity);
+
+    void inject(SearchFragment searchFragment);
 
 }

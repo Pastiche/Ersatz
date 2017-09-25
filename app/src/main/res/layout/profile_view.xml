@@ -206,6 +206,16 @@
             app:srcCompat="@drawable/ic_edit"
             app:useCompatPadding="true" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_add"
+            app:useCompatPadding="true" />
+
+
     </LinearLayout>
 
 

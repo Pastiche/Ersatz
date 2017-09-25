@@ -32,14 +32,14 @@ public interface ItWeekService {
                                @Header("ApplyResponseCache") boolean responseCache);
 
     @Headers("Content-type: application/json")
-    @GET("profule/{page_id}")
+    @GET("profile/{page_id}")
     Call<Profile> getProfileById(@Path("page_id") String pageId,
-                                 @Header("Authorisation") String token,
+                                 @Header("Authorization") String token,
                                  @Header("ApplyOfflineCache") boolean offlineCache,
                                  @Header("ApplyResponseCache") boolean responseCache);
 
     @Headers("Content-type: application/json")
-    @POST("profule")
+    @POST("profile")
     Call<Profile> updateProfile(@Body Profile profile,
                                 @Header("Authorization") String token,
                                 @Header("ApplyOfflineCache") boolean offlineCache,

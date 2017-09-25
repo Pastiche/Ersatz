@@ -7,7 +7,7 @@ import com.example.android.ersatz.screens.common.views.BaseView;
 public interface EditView extends BaseView {
 
     interface EditViewListener {
-        void onSaveClick();
+        void onSaveClick(Profile profile);
     }
 
     void bindProfile(Profile profile);

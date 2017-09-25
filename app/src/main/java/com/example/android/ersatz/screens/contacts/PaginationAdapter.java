@@ -1,4 +1,4 @@
-package com.example.android.ersatz.screens.search;
+package com.example.android.ersatz.screens.contacts;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;

@@ -1,4 +1,4 @@
-package com.example.android.ersatz.screens.profile.view;
+package com.example.android.ersatz.screens.search.view;
 
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
@@ -20,16 +20,18 @@ import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 // TODO: replace "profile" with "public" in qr-code
 // TODO: make pleasantly looking style
 
-public class ProfileViewImpl implements ProfileView {
+// TODO: GET RID OF LEGACY CONTAINERS, MAKE NAMES ALSO DISSAPEAR
+
+public class SearchMvcViewImpl implements SearchMvcView {
 
     private View mRootView;
     private BaseFragment mFragment;
-    private ProfileViewListener mListener;
+    private SearchViewListener mListener;
 
     private AlertDialog.Builder _qrDialog;
     private ImageView _qrCodeImageView;
     private FloatingActionButton _qrCodeFab;
-    private FloatingActionButton _editFab;
+    private FloatingActionButton _addFab;
     private TextView _firstName;
     private TextView _middleName;
     private TextView _lastName;
@@ -42,7 +44,7 @@ public class ProfileViewImpl implements ProfileView {
     private TextView _instagram;
     private TextView _linkedin;
 
-    public ProfileViewImpl(LayoutInflater inflater, ViewGroup container, BaseFragment parentFragment) {
+    public SearchMvcViewImpl(LayoutInflater inflater, ViewGroup container, BaseFragment parentFragment) {
         mRootView = inflater.inflate(R.layout.profile_view, container, false);
         mFragment = parentFragment;
 
@@ -52,7 +54,7 @@ public class ProfileViewImpl implements ProfileView {
 
     private void initialize() {
         _qrCodeFab = (FloatingActionButton) mRootView.findViewById(R.id.qr_fab);
-        _editFab = (FloatingActionButton) mRootView.findViewById(R.id.edit_fab);
+        _addFab = (FloatingActionButton) mRootView.findViewById(R.id.add_fab);
         _firstName = (TextView) mRootView.findViewById(R.id.first_name);
         _middleName = (TextView) mRootView.findViewById(R.id.middle_name);
         _lastName = (TextView) mRootView.findViewById(R.id.last_name);
@@ -69,8 +71,8 @@ public class ProfileViewImpl implements ProfileView {
     }
 
     private void hideUnusedViews() {
-        FloatingActionButton addButton = (FloatingActionButton) mRootView.findViewById(R.id.add_fab);
-        addButton.setVisibility(View.GONE);
+        FloatingActionButton editButton = (FloatingActionButton) mRootView.findViewById(R.id.edit_fab);
+        editButton.setVisibility(View.GONE);
     }
 
     private void setOnClickListeners() {
@@ -80,9 +82,9 @@ public class ProfileViewImpl implements ProfileView {
             }
         });
 
-        _editFab.setOnClickListener(view -> {
+        _addFab.setOnClickListener(view -> {
             if (mListener != null) {
-                mListener.onEditClick();
+                mListener.onAddClick();
             }
         });
     }
@@ -163,7 +165,7 @@ public class ProfileViewImpl implements ProfileView {
     //--------Helpers--------//
 
     @Override
-    public void setListener(ProfileViewListener listener) {
+    public void setListener(SearchViewListener listener) {
         mListener = listener;
     }
 
