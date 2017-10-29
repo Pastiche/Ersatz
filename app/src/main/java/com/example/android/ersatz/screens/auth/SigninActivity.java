@@ -8,12 +8,11 @@ import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.screens.common.controllers.MainActivity;
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.network.ItWeekService;
+import com.example.android.ersatz.model.network.ItWeekService;
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.TokenBody;
 import com.example.android.ersatz.screens.common.controllers.BaseActivity;

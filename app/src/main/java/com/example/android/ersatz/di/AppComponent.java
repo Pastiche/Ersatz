@@ -6,7 +6,7 @@ import com.example.android.ersatz.di.Scopes.ErsatzAppScope;
 import com.example.android.ersatz.di.modules.ItWeekServiceModule;
 import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.di.modules.ControllerModule;
-import com.example.android.ersatz.network.ItWeekService;
+import com.example.android.ersatz.model.network.ItWeekService;
 
 import dagger.Component;
 

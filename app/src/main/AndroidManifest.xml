@@ -55,7 +55,12 @@
             android:theme="@style/AppTheme.Dark">
 
         </activity>
+        <activity android:name=".screens.contacts.controllers.ProfileDetailsActivity" />
 
+        <provider
+            android:name=".model.db.ProfileProvider"
+            android:authorities="com.example.android.ersatz"
+            android:exported="false" />
     </application>
 
 </manifest>

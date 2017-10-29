@@ -41,4 +41,15 @@
     <string name="pass_not_match_message">Password does not match</string>
     <string name="save">save</string>
     <string name="enter_valid_email_message">enter a valid email address</string>
+    <string name="error_saving_profile">Error saving profile</string>
+    <string name="profile_saved">Profile saved</string>
+    <string name="anonymous_colleague">Anonymous colleague</string>
+    <string name="empty_view_title_text">No ersatzes yet</string>
+    <string name="empty_view_subtitle_text">Start by adding one</string>
+    <string name="no_results_message">No results</string>
+    <string name="delete_all">Delete all</string>
+    <string name="all_profiles_deleted_message">All profiles deleted</string>
+    <string name="delete_all_contacts_confirmation">Delete all contacts?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

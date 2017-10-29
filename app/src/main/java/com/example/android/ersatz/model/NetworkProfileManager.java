@@ -6,9 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Profile;
-import com.example.android.ersatz.network.ItWeekService;
-
-import java.util.List;
+import com.example.android.ersatz.model.common.BaseObservableManager;
+import com.example.android.ersatz.model.network.ItWeekService;
 
 import javax.inject.Inject;
 
@@ -34,7 +33,6 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
 
     private ItWeekService mItWeekService;
     private ErsatzApp mErsatzApp;
-    private FragmentActivity mActivity;
     private SharedPreferences mSharedPreferences;
 
     @BindString(R.string.unknown_error_message)
@@ -53,12 +51,11 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
     }
 
 
-
     //-------- fetching data --------//
 
     public void fetchProfileById(final String pageId) {
         String token = loadToken();
-        mItWeekService.getProfileById(pageId, token, true, false).enqueue(new Callback<Profile>() {
+        mItWeekService.getProfileById(pageId, token, true, true).enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 handleResponse(response);
@@ -135,7 +132,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
         }
 
         if (response.raw().networkResponse() != null) {
-            System.out.println("okh: response was served from server (okhttp)");
+            System.out.println("response was served from server (okhttp)");
         }
     }
 

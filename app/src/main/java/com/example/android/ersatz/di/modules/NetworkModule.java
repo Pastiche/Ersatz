@@ -5,8 +5,8 @@ import com.example.android.ersatz.ErsatzApp;
 import android.net.ConnectivityManager;
 
 import com.example.android.ersatz.di.Scopes.ErsatzAppScope;
-import com.example.android.ersatz.network.OfflineResponseCacheInterceptor;
-import com.example.android.ersatz.network.ResponseCacheInterceptor;
+import com.example.android.ersatz.model.network.OfflineResponseCacheInterceptor;
+import com.example.android.ersatz.model.network.ResponseCacheInterceptor;
 
 import java.io.File;
 

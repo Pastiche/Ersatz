@@ -1,7 +1,7 @@
 package com.example.android.ersatz.di.modules;
 
 import com.example.android.ersatz.di.Scopes.ErsatzAppScope;
-import com.example.android.ersatz.network.ItWeekService;
+import com.example.android.ersatz.model.network.ItWeekService;
 
 import dagger.Module;
 import dagger.Provides;

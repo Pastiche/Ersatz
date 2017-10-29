@@ -55,6 +55,8 @@ dependencies {
 
     //-------- qr code --------//
     compile 'com.github.kenglxn.QRGen:android:2.3.0'
+    compile group: 'com.google.zxing', name: 'core', version: '3.3.0'
+    compile 'com.journeyapps:zxing-android-embedded:3.5.0'
 
     //-------- standard stuff --------//
     compile 'com.android.support:design:25.3.1'
@@ -63,6 +65,4 @@ dependencies {
     //-------- logger --------//
     compile group: 'com.jakewharton.timber', name: 'timber', version: '4.5.1'
 
-    //-------- popup image --------//
-    compile 'com.github.chathuralakmal:AndroidImagePopup:1.0.9'
 }

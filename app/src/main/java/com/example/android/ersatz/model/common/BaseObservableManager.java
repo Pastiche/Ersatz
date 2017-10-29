@@ -1,4 +1,4 @@
-package com.example.android.ersatz.model;
+package com.example.android.ersatz.model.common;
 
 import java.util.Collections;
 import java.util.Set;

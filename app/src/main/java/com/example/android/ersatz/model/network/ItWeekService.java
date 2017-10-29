@@ -1,4 +1,4 @@
-package com.example.android.ersatz.network;
+package com.example.android.ersatz.model.network;
 
 import com.example.android.ersatz.entities.AuthBody;
 import com.example.android.ersatz.entities.Profile;

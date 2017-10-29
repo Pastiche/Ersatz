@@ -1,32 +1,42 @@
 package com.example.android.ersatz.screens.search;
 
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.UriMatcher;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.android.ersatz.ErsatzApp;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
+import com.example.android.ersatz.model.db.ProfileContract.ProfileEntry;
 import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 import com.example.android.ersatz.screens.search.view.SearchMvcView;
 import com.example.android.ersatz.screens.search.view.SearchMvcViewImpl;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import static com.example.android.ersatz.utils.QrUtils.*;
 
 import javax.inject.Inject;
 
-// TODO: make menu part of the view (?)
 // TODO: implement dagger 2 deeper
+// TODO: move out uri matching staff out of this class
+// TODO: make refresh button
 
 public class SearchFragment extends BaseFragment implements
         SearchMvcView.SearchViewListener,
@@ -76,8 +86,45 @@ public class SearchFragment extends BaseFragment implements
     //-------- view callbacks --------//
 
     @Override
-    public void onAddClick() {
-        showMessage("Adding...");
+    public void onAddProfileClick() {
+        // TODO: prohibit duplicates
+        if (mProfile == null)
+            return;
+        if (!validateProfilePageUrl())
+            return;
+        if (!validateProfilePageId())
+            return;
+
+        ContentValues values = fillValues();
+
+        Uri newRowUri = getContext().getContentResolver().insert(ProfileEntry.CONTENT_URI, values);
+        reportInsertResult(newRowUri);
+    }
+
+    private ContentValues fillValues() {
+        ContentValues values = new ContentValues();
+        values.put(ProfileEntry.COLUMN_PAGE_URL, mProfile.getPageUrl());
+        values.put(ProfileEntry.COLUMN_PAGE_ID, mProfile.getPageId());
+        return values;
+    }
+
+    private void reportInsertResult(Uri newRowUri) {
+        String message;
+        if (newRowUri == null)
+            message = getString(R.string.error_saving_profile);
+        else
+            message = getString(R.string.profile_saved);
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean validateProfilePageUrl() {
+        String pageUrl = mProfile.getPageUrl();
+        return !TextUtils.isEmpty(pageUrl);
+    }
+
+    private boolean validateProfilePageId() {
+        String pageId = mProfile.getPageId();
+        return !TextUtils.isEmpty(pageId);
     }
 
     @Override
@@ -87,7 +134,7 @@ public class SearchFragment extends BaseFragment implements
 
     @Override
     public void onShowQrCodeBtnClick() {
-        Bitmap qrCodeImage = makeBitmapQrCodeFromUrl(mProfile.getPageUrl());
+        Bitmap qrCodeImage = makeBitmapQrCodeFromUrl(mProfile.getPageId());
         mView.showQrCode(qrCodeImage);
     }
 
@@ -95,14 +142,18 @@ public class SearchFragment extends BaseFragment implements
 
     @Override
     public void onProfileFetched(Profile profile) {
-        mProfile = profile;
-        mView.bindProfile(mProfile);
+        // TODO: enhance handling no results
+        if (profile.getPageUrl() != null) {
+            mProfile = profile;
+            mView.bindProfile(mProfile);
+        } else showMessage(getString(R.string.no_results_message));
     }
 
     @Override
     public void onErrorOccurred(String message) {
         showMessage(message);
     }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -113,7 +164,6 @@ public class SearchFragment extends BaseFragment implements
             @Override
             public boolean onQueryTextSubmit(String inputId) {
                 if (validateQuery(inputId)) {
-/*                    String pageId = searchView.getQuery().toString();*/
                     mNetworkManager.fetchProfileById(inputId);
                 }
                 return false;
@@ -124,8 +174,6 @@ public class SearchFragment extends BaseFragment implements
                 return false;
             }
         });
-
-
     }
 
     private SearchView getSearchViewFromMenu(Menu menu) {
@@ -133,7 +181,38 @@ public class SearchFragment extends BaseFragment implements
         return (SearchView) MenuItemCompat.getActionView(searchItem);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.scan_qr_code:
+                IntentIntegrator.forSupportFragment(this)
+                        .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
+                        .setPrompt("Scan")
+                        .setCameraId(0)
+                        .setBeepEnabled(false)
+                        .setBarcodeImageEnabled(false)
+                        .initiateScan();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private boolean validateQuery(String query) {
         return (query != null && !query.equals(""));
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null)
+                showMessage("You cancelled the scanning");
+            else if (validateQuery(result.getContents())) {
+                mNetworkManager.fetchProfileById(result.getContents());
+            }
+        } else
+            super.onActivityResult(requestCode, resultCode, data);
+    }
+
 }

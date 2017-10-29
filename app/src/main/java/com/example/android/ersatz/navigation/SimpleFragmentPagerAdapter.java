@@ -19,7 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.android.ersatz.screens.contacts.ContactsFragment;
+import com.example.android.ersatz.screens.contacts.controllers.ContactsFragment;
 import com.example.android.ersatz.screens.profile.ProfileFragment;
 import com.example.android.ersatz.screens.search.SearchFragment;
 

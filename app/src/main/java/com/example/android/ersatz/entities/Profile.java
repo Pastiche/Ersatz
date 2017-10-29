@@ -25,7 +25,7 @@ public class Profile {
     @SerializedName("contacts")
     @Expose
     private List<Contact> contacts = null;
-    @SerializedName("_id")
+    @SerializedName("page_id")
     @Expose
     private String pageId;
     @SerializedName("page_url")

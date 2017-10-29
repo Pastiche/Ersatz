@@ -1,6 +1,7 @@
-package com.example.android.ersatz.screens.search.view;
+package com.example.android.ersatz.screens.contacts.view;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,25 +14,22 @@ import android.widget.TextView;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
-import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 
 // TODO: make initial visiblity of wrappers = GONE, and reveal them only if we have data
 // TODO: make different listener for onEmailClick event
 // TODO: replace "profile" with "public" in qr-code
 // TODO: make pleasantly looking style
 
-// TODO: GET RID OF LEGACY CONTAINERS, MAKE NAMES ALSO DISSAPEAR
+public class ProfileDetailsViewImpl implements ProfileDetailsView {
 
-public class SearchMvcViewImpl implements SearchMvcView {
 
+    Context mContext;
     private View mRootView;
-    private BaseFragment mFragment;
-    private SearchViewListener mListener;
+    private ProfileDetailsListener mListener;
 
     private AlertDialog.Builder _qrDialog;
     private ImageView _qrCodeImageView;
     private FloatingActionButton _qrCodeFab;
-    private FloatingActionButton _addFab;
     private TextView _firstName;
     private TextView _middleName;
     private TextView _lastName;
@@ -44,9 +42,9 @@ public class SearchMvcViewImpl implements SearchMvcView {
     private TextView _instagram;
     private TextView _linkedin;
 
-    public SearchMvcViewImpl(LayoutInflater inflater, ViewGroup container, BaseFragment parentFragment) {
-        mRootView = inflater.inflate(R.layout.profile_view, container, false);
-        mFragment = parentFragment;
+    public ProfileDetailsViewImpl(LayoutInflater inflater, ViewGroup container, Context context) {
+        mRootView = inflater.inflate(R.layout.profile_view, null, true);
+        mContext = context;
 
         initialize();
         setOnClickListeners();
@@ -54,7 +52,6 @@ public class SearchMvcViewImpl implements SearchMvcView {
 
     private void initialize() {
         _qrCodeFab = (FloatingActionButton) mRootView.findViewById(R.id.qr_fab);
-        _addFab = (FloatingActionButton) mRootView.findViewById(R.id.add_fab);
         _firstName = (TextView) mRootView.findViewById(R.id.first_name);
         _middleName = (TextView) mRootView.findViewById(R.id.middle_name);
         _lastName = (TextView) mRootView.findViewById(R.id.last_name);
@@ -71,20 +68,16 @@ public class SearchMvcViewImpl implements SearchMvcView {
     }
 
     private void hideUnusedViews() {
-        FloatingActionButton editButton = (FloatingActionButton) mRootView.findViewById(R.id.edit_fab);
-        editButton.setVisibility(View.GONE);
+        FloatingActionButton addButton = (FloatingActionButton) mRootView.findViewById(R.id.add_fab);
+/*        FloatingActionButton editFab = (FloatingActionButton) mRootView.findViewById(R.id.edit_fab);*/
+        addButton.setVisibility(View.GONE);
+/*        editFab.setVisibility(View.GONE);*/
     }
 
     private void setOnClickListeners() {
         _qrCodeFab.setOnClickListener(view -> {
             if (mListener != null) {
                 mListener.onShowQrCodeBtnClick();
-            }
-        });
-
-        _addFab.setOnClickListener(view -> {
-            if (mListener != null) {
-                mListener.onAddProfileClick();
             }
         });
     }
@@ -104,6 +97,7 @@ public class SearchMvcViewImpl implements SearchMvcView {
     }
 
     private void bindContacts(Profile profile) {
+        System.out.println("In mView okhttp: " + profile);
         bindContactToView(profile.getFb(), _fb);
         bindContactToView(profile.getVk(), _vk);
         bindContactToView(profile.getEmail(), _email);
@@ -154,18 +148,18 @@ public class SearchMvcViewImpl implements SearchMvcView {
     }
 
     private void buildQrCodeImageView(Bitmap qrCodeImage) {
-        _qrCodeImageView = new ImageView(mFragment.getContext());
+        _qrCodeImageView = new ImageView(mContext);
         _qrCodeImageView.setImageBitmap(qrCodeImage);
     }
 
     private void buildDialog() {
-        _qrDialog = new AlertDialog.Builder(mFragment.getContext(), R.style.AppTheme_Dark_Dialog);
+        _qrDialog = new AlertDialog.Builder(mContext, R.style.AppTheme_Dark_Dialog);
     }
 
     //--------Helpers--------//
 
     @Override
-    public void setListener(SearchViewListener listener) {
+    public void setListener(ProfileDetailsListener listener) {
         mListener = listener;
     }
 

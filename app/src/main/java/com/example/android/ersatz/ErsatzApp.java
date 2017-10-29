@@ -7,7 +7,7 @@ import android.net.ConnectivityManager;
 import com.example.android.ersatz.di.AppComponent;
 import com.example.android.ersatz.di.DaggerAppComponent;
 import com.example.android.ersatz.di.modules.ErsatzAppModule;
-import com.example.android.ersatz.network.ItWeekService;
+import com.example.android.ersatz.model.network.ItWeekService;
 
 import javax.inject.Inject;
 

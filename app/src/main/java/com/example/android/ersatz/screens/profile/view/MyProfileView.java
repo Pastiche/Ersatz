@@ -1,4 +1,4 @@
-package com.example.android.ersatz.screens.search.view;
+package com.example.android.ersatz.screens.profile.view;
 
 import android.graphics.Bitmap;
 
@@ -6,10 +6,10 @@ import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.screens.common.views.BaseView;
 
-public interface SearchMvcView extends BaseView {
+public interface MyProfileView extends BaseView {
 
-    interface SearchViewListener {
-        void onAddProfileClick();
+    interface ProfileViewListener {
+        void onEditClick();
 
         void onContactUrlClick(Contact contact);
 
@@ -18,7 +18,7 @@ public interface SearchMvcView extends BaseView {
 
     void bindProfile(Profile profile);
 
-    void setListener(SearchViewListener listener);
+    void setListener(ProfileViewListener listener);
 
     void showQrCode(Bitmap qrCodeImage);
 

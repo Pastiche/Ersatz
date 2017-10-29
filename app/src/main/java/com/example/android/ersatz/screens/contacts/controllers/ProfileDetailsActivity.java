@@ -1,4 +1,5 @@
-package com.example.android.ersatz.screens.profile;
+package com.example.android.ersatz.screens.contacts.controllers;
+
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,71 +9,67 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.ersatz.ErsatzApp;
+import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
-import com.example.android.ersatz.screens.common.controllers.BaseFragment;
-import com.example.android.ersatz.screens.edit.EditActivity;
+import com.example.android.ersatz.model.NetworkProfileManager.NetworkProfileManagerListener;
+import com.example.android.ersatz.screens.common.controllers.BaseActivity;
+import com.example.android.ersatz.screens.contacts.view.ProfileDetailsView;
+import com.example.android.ersatz.screens.contacts.view.ProfileDetailsViewImpl;
+import com.example.android.ersatz.screens.profile.view.MyProfileView.ProfileViewListener;
 import com.example.android.ersatz.screens.profile.view.MyProfileViewImpl;
-import com.example.android.ersatz.screens.profile.view.MyProfileView;
-
-import static com.example.android.ersatz.utils.QrUtils.*;
 
 import javax.inject.Inject;
 
-// TODO: make menu part of the view (?)
-// TODO: implement dagger 2 deeper
+import static com.example.android.ersatz.screens.contacts.view.ProfileDetailsView.*;
+import static com.example.android.ersatz.utils.QrUtils.makeBitmapQrCodeFromUrl;
 
-public class ProfileFragment extends BaseFragment implements
-        MyProfileView.ProfileViewListener,
-        NetworkProfileManager.NetworkProfileManagerListener {
+public class ProfileDetailsActivity extends BaseActivity implements ProfileDetailsListener,
+        NetworkProfileManagerListener {
 
     @Inject
     NetworkProfileManager mNetworkManager;
 
     Profile mProfile;
 
-    private MyProfileViewImpl mView;
+    private ProfileDetailsView mView;
 
-    public ProfileFragment() {
+    public ProfileDetailsActivity() {
     }
 
-    //-------- lifecycle --------//
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         buildComponent().inject(this);
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        mView = new MyProfileViewImpl(inflater, container, this.getContext());
+        mView = new ProfileDetailsViewImpl(getLayoutInflater(), null, this);
+        setContentView(mView.getRootView());
         mView.setListener(this);
-        return mView.getRootView();
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mNetworkManager.registerListener(this);
-        mNetworkManager.fetchMyProfile();
+
+        Intent intent = getIntent();
+        String pageId = intent.getStringExtra("page_id");
+        if (pageId == null) {
+            finish();
+            showMessage("Failed to read page id");
+        } else {
+            System.out.println("okhttp: " + pageId);
+            mNetworkManager.registerListener(this);
+            mNetworkManager.fetchProfileById(pageId);
+        }
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mNetworkManager.unregisterListener(this);
-    }
-
-    //-------- view callbacks --------//
-
-    // TODO: allow to edit only if there is internet (ALSO DO THIS FOR THE SAVE BUTTON)
-    @Override
-    public void onEditClick() {
-        startEditActivity();
     }
 
     @Override
@@ -86,21 +83,15 @@ public class ProfileFragment extends BaseFragment implements
         mView.showQrCode(qrCodeImage);
     }
 
-    //-------- manager callbacks --------//
-
     @Override
     public void onProfileFetched(Profile profile) {
         mProfile = profile;
+        System.out.println("Okhttp: " + profile);
         mView.bindProfile(mProfile);
     }
 
     @Override
     public void onErrorOccurred(String message) {
         showMessage(message);
-    }
-
-    private void startEditActivity() {
-        Intent intent = new Intent(getContext(), EditActivity.class);
-        startActivity(intent);
     }
 }

@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.android.ersatz.R;
@@ -22,6 +23,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 // TODO: configure animation of the signin-signout transitions - it is slow
+// TODO: make qr code transfer url not id
 
 public class MainActivity extends BaseActivity {
 
@@ -108,4 +110,5 @@ public class MainActivity extends BaseActivity {
         }
         mLastBackPressTime = System.currentTimeMillis();
     }
+
 }

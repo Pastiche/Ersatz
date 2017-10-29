@@ -17,6 +17,8 @@ import javax.inject.Inject;
 public class EditActivity extends BaseActivity implements
         EditView.EditViewListener, NetworkProfileManager.NetworkProfileManagerListener {
 
+    // TODO: replace save-button from the bottom of the screen to the menu
+
     @Inject
     NetworkProfileManager mNetworkManager;
     @Inject

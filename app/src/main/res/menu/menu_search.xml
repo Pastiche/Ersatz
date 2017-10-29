@@ -9,8 +9,12 @@
         android:iconifiedByDefault="false"
         android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView"
-
-        />
+        app:showAsAction="ifRoom|collapseActionView" />
+    <!-- scan qr-code -->
+    <item
+        android:id="@+id/scan_qr_code"
+        android:icon="@drawable/ic_qrcode_scan"
+        android:title="@string/sign_out"
+        app:showAsAction="ifRoom|collapseActionView" />
 
 </menu>

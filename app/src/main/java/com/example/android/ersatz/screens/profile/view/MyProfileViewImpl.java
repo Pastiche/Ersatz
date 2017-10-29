@@ -1,6 +1,7 @@
 package com.example.android.ersatz.screens.profile.view;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,17 +14,16 @@ import android.widget.TextView;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
-import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 
 // TODO: make initial visiblity of wrappers = GONE, and reveal them only if we have data
 // TODO: make different listener for onEmailClick event
 // TODO: replace "profile" with "public" in qr-code
 // TODO: make pleasantly looking style
 
-public class ProfileViewImpl implements ProfileView {
+public class MyProfileViewImpl implements MyProfileView {
 
     private View mRootView;
-    private BaseFragment mFragment;
+    private Context mContext;
     private ProfileViewListener mListener;
 
     private AlertDialog.Builder _qrDialog;
@@ -42,9 +42,9 @@ public class ProfileViewImpl implements ProfileView {
     private TextView _instagram;
     private TextView _linkedin;
 
-    public ProfileViewImpl(LayoutInflater inflater, ViewGroup container, BaseFragment parentFragment) {
+    public MyProfileViewImpl(LayoutInflater inflater, ViewGroup container, Context context) {
         mRootView = inflater.inflate(R.layout.profile_view, container, false);
-        mFragment = parentFragment;
+        mContext = context;
 
         initialize();
         setOnClickListeners();
@@ -152,12 +152,12 @@ public class ProfileViewImpl implements ProfileView {
     }
 
     private void buildQrCodeImageView(Bitmap qrCodeImage) {
-        _qrCodeImageView = new ImageView(mFragment.getContext());
+        _qrCodeImageView = new ImageView(mContext);
         _qrCodeImageView.setImageBitmap(qrCodeImage);
     }
 
     private void buildDialog() {
-        _qrDialog = new AlertDialog.Builder(mFragment.getContext(), R.style.AppTheme_Dark_Dialog);
+        _qrDialog = new AlertDialog.Builder(mContext, R.style.AppTheme_Dark_Dialog);
     }
 
     //--------Helpers--------//
