@@ -2,7 +2,6 @@ package com.example.android.ersatz.screens.search;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.UriMatcher;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,9 +29,9 @@ import com.example.android.ersatz.screens.search.view.SearchMvcViewImpl;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import static com.example.android.ersatz.utils.QrUtils.*;
-
 import javax.inject.Inject;
+
+import static com.example.android.ersatz.utils.QrUtils.makeBitmapQrCodeFromUrl;
 
 public class SearchFragment extends BaseFragment implements
         SearchMvcView.SearchViewListener,
