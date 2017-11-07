@@ -77,11 +77,6 @@ public class SignupActivity extends BaseActivity {
     @BindString(R.string.pass_not_match_message)
     String passNotMatchMessage;
 
-    // TODO: Deal with progressDialog
-    // TODO: extract abstract class and interface (?) for signup and signin
-    // TODO: provide DI with Dagger 2
-    // TODO: deal with onBackPressedButton
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         buildComponent().inject(this);
@@ -153,7 +148,7 @@ public class SignupActivity extends BaseActivity {
     private void handleSuccess(String token) {
         informSignupResult(successMessage);
         storeToken(token);
-        startMainActivity();
+        startSigninActivity();
     }
 
     private void handleFailure() {

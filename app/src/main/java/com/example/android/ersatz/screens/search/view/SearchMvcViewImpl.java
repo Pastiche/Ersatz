@@ -1,6 +1,7 @@
 package com.example.android.ersatz.screens.search.view;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,19 +14,11 @@ import android.widget.TextView;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
-import com.example.android.ersatz.screens.common.controllers.BaseFragment;
-
-// TODO: make initial visiblity of wrappers = GONE, and reveal them only if we have data
-// TODO: make different listener for onEmailClick event
-// TODO: replace "profile" with "public" in qr-code
-// TODO: make pleasantly looking style
-
-// TODO: GET RID OF LEGACY CONTAINERS, MAKE NAMES ALSO DISSAPEAR
 
 public class SearchMvcViewImpl implements SearchMvcView {
 
     private View mRootView;
-    private BaseFragment mFragment;
+    private Context mContext;
     private SearchViewListener mListener;
 
     private AlertDialog.Builder _qrDialog;
@@ -44,15 +37,19 @@ public class SearchMvcViewImpl implements SearchMvcView {
     private TextView _instagram;
     private TextView _linkedin;
 
-    public SearchMvcViewImpl(LayoutInflater inflater, ViewGroup container, BaseFragment parentFragment) {
+    public SearchMvcViewImpl(LayoutInflater inflater, ViewGroup container, Context context) {
         mRootView = inflater.inflate(R.layout.profile_view, container, false);
-        mFragment = parentFragment;
+        mContext = context;
 
         initialize();
-        setOnClickListeners();
     }
 
     private void initialize() {
+        initializeViews();
+        setOnClickListeners();
+    }
+
+    private void initializeViews() {
         _qrCodeFab = (FloatingActionButton) mRootView.findViewById(R.id.qr_fab);
         _addFab = (FloatingActionButton) mRootView.findViewById(R.id.add_fab);
         _firstName = (TextView) mRootView.findViewById(R.id.first_name);
@@ -66,25 +63,26 @@ public class SearchMvcViewImpl implements SearchMvcView {
         _twitter = (TextView) mRootView.findViewById(R.id.twitter);
         _instagram = (TextView) mRootView.findViewById(R.id.instagram);
         _linkedin = (TextView) mRootView.findViewById(R.id.linkedin);
-
-        hideUnusedViews();
-    }
-
-    private void hideUnusedViews() {
-        FloatingActionButton editButton = (FloatingActionButton) mRootView.findViewById(R.id.edit_fab);
-        editButton.setVisibility(View.GONE);
     }
 
     private void setOnClickListeners() {
+        setQrCodeFabOnClickListener();
+        setAddFabOnClickListener();
+    }
+
+    private void setQrCodeFabOnClickListener() {
         _qrCodeFab.setOnClickListener(view -> {
             if (mListener != null) {
                 mListener.onShowQrCodeBtnClick();
             }
         });
+    }
 
+    private void setAddFabOnClickListener() {
         _addFab.setOnClickListener(view -> {
             if (mListener != null) {
                 mListener.onAddProfileClick();
+                _addFab.setVisibility(View.GONE);
             }
         });
     }
@@ -95,12 +93,33 @@ public class SearchMvcViewImpl implements SearchMvcView {
     public void bindProfile(Profile profile) {
         bindNames(profile);
         bindContacts(profile);
+        makeFabsVisible();
     }
 
     private void bindNames(Profile profile) {
-        _firstName.setText(profile.getFirstName());
-        _lastName.setText(profile.getLastName());
-        _middleName.setText(profile.getMiddleName());
+        bindNameToView(profile.getFirstName(), _firstName);
+        bindNameToView(profile.getMiddleName(), _middleName);
+        bindNameToView(profile.getLastName(), _lastName);
+    }
+
+    private void bindNameToView(String name, TextView textView) {
+        if (validateName(name)) {
+            textView.setText(name);
+            makeParentViewVisible(textView);
+        } else
+            hideParentView(textView);
+    }
+
+    private boolean validateName(String name) {
+        return name != null && !name.isEmpty();
+    }
+
+    private void makeParentViewVisible(TextView view) {
+        ((View) view.getParent()).setVisibility(View.VISIBLE);
+    }
+
+    private void hideParentView(TextView view) {
+        ((View) view.getParent()).setVisibility(View.GONE);
     }
 
     private void bindContacts(Profile profile) {
@@ -118,8 +137,9 @@ public class SearchMvcViewImpl implements SearchMvcView {
         if (validateContact(contact)) {
             view.setText(contact.getUrl());
             setOnContactUrlClickListener(contact, view);
+            makeParentViewVisible(view);
         } else
-            hideContainer(view);
+            hideParentView(view);
     }
 
     private boolean validateContact(Contact contact) {
@@ -136,13 +156,15 @@ public class SearchMvcViewImpl implements SearchMvcView {
         });
     }
 
-    private void hideContainer(TextView view) {
-        ((View) view.getParent()).setVisibility(View.GONE);
+    private void makeFabsVisible() {
+        _addFab.setVisibility(View.VISIBLE);
+        _qrCodeFab.setVisibility(View.VISIBLE);
     }
+
+    //--------QrCode--------//
 
     @Override
     public void showQrCode(Bitmap qrCodeImage) {
-        // TODO: get rid of border
         buildQrDialogWithImage(qrCodeImage);
         _qrDialog.show();
     }
@@ -154,12 +176,12 @@ public class SearchMvcViewImpl implements SearchMvcView {
     }
 
     private void buildQrCodeImageView(Bitmap qrCodeImage) {
-        _qrCodeImageView = new ImageView(mFragment.getContext());
+        _qrCodeImageView = new ImageView(mContext);
         _qrCodeImageView.setImageBitmap(qrCodeImage);
     }
 
     private void buildDialog() {
-        _qrDialog = new AlertDialog.Builder(mFragment.getContext(), R.style.AppTheme_Dark_Dialog);
+        _qrDialog = new AlertDialog.Builder(mContext, R.style.AppTheme_Dark_Dialog);
     }
 
     //--------Helpers--------//

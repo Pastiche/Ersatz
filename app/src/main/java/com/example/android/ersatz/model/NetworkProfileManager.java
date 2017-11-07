@@ -51,7 +51,7 @@ public class NetworkProfileManager extends BaseObservableManager<NetworkProfileM
     }
 
 
-    //-------- fetching data --------//
+    //-------- requests --------//
 
     public void fetchProfileById(final String pageId) {
         String token = loadToken();

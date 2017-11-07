@@ -2,6 +2,7 @@ package com.example.android.ersatz.screens.profile;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,28 +15,28 @@ import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
 import com.example.android.ersatz.screens.common.controllers.BaseFragment;
 import com.example.android.ersatz.screens.edit.EditActivity;
-import com.example.android.ersatz.screens.profile.view.MyProfileViewImpl;
 import com.example.android.ersatz.screens.profile.view.MyProfileView;
-
-import static com.example.android.ersatz.utils.QrUtils.*;
+import com.example.android.ersatz.screens.profile.view.MyProfileViewImpl;
 
 import javax.inject.Inject;
 
-// TODO: make menu part of the view (?)
-// TODO: implement dagger 2 deeper
+import static com.example.android.ersatz.utils.QrUtils.makeBitmapQrCodeFromUrl;
 
-public class ProfileFragment extends BaseFragment implements
+public class MyProfileFragment extends BaseFragment implements
         MyProfileView.ProfileViewListener,
         NetworkProfileManager.NetworkProfileManagerListener {
+
+    @Inject
+    ErsatzApp ersatzApp;
 
     @Inject
     NetworkProfileManager mNetworkManager;
 
     Profile mProfile;
 
-    private MyProfileViewImpl mView;
+    private MyProfileView mView;
 
-    public ProfileFragment() {
+    public MyProfileFragment() {
     }
 
     //-------- lifecycle --------//
@@ -43,6 +44,7 @@ public class ProfileFragment extends BaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         buildComponent().inject(this);
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -69,15 +71,35 @@ public class ProfileFragment extends BaseFragment implements
 
     //-------- view callbacks --------//
 
-    // TODO: allow to edit only if there is internet (ALSO DO THIS FOR THE SAVE BUTTON)
     @Override
     public void onEditClick() {
-        startEditActivity();
+        if (ersatzApp.isNetworkConnected())
+            startEditActivity();
     }
 
     @Override
     public void onContactUrlClick(Contact contact) {
 
+        if (contact.getType().equals(Contact.CONTACT_TYPE_SKYPE))
+            showMessage("Skype intent not developed yet...");
+
+        else if (contact.getType().equals(Contact.CONTACT_TYPE_EMAIL))
+            startSendEmailIntent(contact.getUrl());
+
+        else startOpenInBrowserIntent(contact);
+    }
+
+    private void startOpenInBrowserIntent(Contact contact) {
+        String path = contact.getUrl();
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(contact.getEndpoint(contact.getType()) + path));
+        startActivity(browserIntent);
+    }
+
+    private void startSendEmailIntent(String email) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setType("text/html");
+        intent.putExtra(Intent.EXTRA_EMAIL, email);
+        startActivity(Intent.createChooser(intent, "Send Email"));
     }
 
     @Override

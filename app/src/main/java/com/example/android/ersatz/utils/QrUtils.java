@@ -8,7 +8,6 @@ import net.glxn.qrgen.android.QRCode;
 public class QrUtils {
 
     public static Bitmap makeBitmapQrCodeFromUrl(String url) {
-        // TODO: configure colors
         return QRCode.from(url).withSize(480, 480).bitmap();
     }
 

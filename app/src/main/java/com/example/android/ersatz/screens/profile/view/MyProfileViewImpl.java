@@ -15,16 +15,7 @@ import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 
-// TODO: make initial visiblity of wrappers = GONE, and reveal them only if we have data
-// TODO: make different listener for onEmailClick event
-// TODO: replace "profile" with "public" in qr-code
-// TODO: make pleasantly looking style
-
 public class MyProfileViewImpl implements MyProfileView {
-
-    private View mRootView;
-    private Context mContext;
-    private ProfileViewListener mListener;
 
     private AlertDialog.Builder _qrDialog;
     private ImageView _qrCodeImageView;
@@ -42,15 +33,23 @@ public class MyProfileViewImpl implements MyProfileView {
     private TextView _instagram;
     private TextView _linkedin;
 
+    private View mRootView;
+    private Context mContext;
+    private ProfileViewListener mListener;
+
     public MyProfileViewImpl(LayoutInflater inflater, ViewGroup container, Context context) {
         mRootView = inflater.inflate(R.layout.profile_view, container, false);
         mContext = context;
-
         initialize();
-        setOnClickListeners();
     }
 
     private void initialize() {
+        initializeViews();
+        setOnClickListeners();
+        makeFabsVisible();
+    }
+
+    private void initializeViews() {
         _qrCodeFab = (FloatingActionButton) mRootView.findViewById(R.id.qr_fab);
         _editFab = (FloatingActionButton) mRootView.findViewById(R.id.edit_fab);
         _firstName = (TextView) mRootView.findViewById(R.id.first_name);
@@ -64,22 +63,22 @@ public class MyProfileViewImpl implements MyProfileView {
         _twitter = (TextView) mRootView.findViewById(R.id.twitter);
         _instagram = (TextView) mRootView.findViewById(R.id.instagram);
         _linkedin = (TextView) mRootView.findViewById(R.id.linkedin);
-
-        hideUnusedViews();
-    }
-
-    private void hideUnusedViews() {
-        FloatingActionButton addButton = (FloatingActionButton) mRootView.findViewById(R.id.add_fab);
-        addButton.setVisibility(View.GONE);
     }
 
     private void setOnClickListeners() {
+        setQrCodeFabOnClickListener();
+        setEditFabOnClickListener();
+    }
+
+    private void setQrCodeFabOnClickListener() {
         _qrCodeFab.setOnClickListener(view -> {
             if (mListener != null) {
                 mListener.onShowQrCodeBtnClick();
             }
         });
+    }
 
+    private void setEditFabOnClickListener() {
         _editFab.setOnClickListener(view -> {
             if (mListener != null) {
                 mListener.onEditClick();
@@ -96,9 +95,24 @@ public class MyProfileViewImpl implements MyProfileView {
     }
 
     private void bindNames(Profile profile) {
-        _firstName.setText(profile.getFirstName());
-        _lastName.setText(profile.getLastName());
-        _middleName.setText(profile.getMiddleName());
+        bindNameToView(profile.getFirstName(), _firstName);
+        bindNameToView(profile.getMiddleName(), _middleName);
+        bindNameToView(profile.getLastName(), _lastName);
+    }
+
+    private void bindNameToView(String name, TextView textView) {
+        if (validateName(name)) {
+            textView.setText(name);
+            makeParentViewVisible(textView);
+        }
+    }
+
+    private boolean validateName(String name) {
+        return name != null && !name.isEmpty();
+    }
+
+    private void makeParentViewVisible(TextView view) {
+        ((View) view.getParent()).setVisibility(View.VISIBLE);
     }
 
     private void bindContacts(Profile profile) {
@@ -116,8 +130,8 @@ public class MyProfileViewImpl implements MyProfileView {
         if (validateContact(contact)) {
             view.setText(contact.getUrl());
             setOnContactUrlClickListener(contact, view);
-        } else
-            hideContainer(view);
+            makeParentViewVisible(view);
+        }
     }
 
     private boolean validateContact(Contact contact) {
@@ -134,9 +148,7 @@ public class MyProfileViewImpl implements MyProfileView {
         });
     }
 
-    private void hideContainer(TextView view) {
-        ((View) view.getParent()).setVisibility(View.GONE);
-    }
+    //--------QrCode--------//
 
     @Override
     public void showQrCode(Bitmap qrCodeImage) {
@@ -161,6 +173,11 @@ public class MyProfileViewImpl implements MyProfileView {
     }
 
     //--------Helpers--------//
+
+    private void makeFabsVisible() {
+        _qrCodeFab.setVisibility(View.VISIBLE);
+        _editFab.setVisibility(View.VISIBLE);
+    }
 
     @Override
     public void setListener(ProfileViewListener listener) {

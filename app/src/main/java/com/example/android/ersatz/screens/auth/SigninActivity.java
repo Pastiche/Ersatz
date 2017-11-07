@@ -26,13 +26,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// TODO: manage all constants in one class, like: response_codes, preference_strings, base_url;
-// TODO: deal with the UPPER back button
-// TODO: ask for the list of errors ad handle them all
-// TODO: make name and pass at least 3 chars
-// TODO: hugely implement Butterknife
-// TODO: Trim inputName
-
 public class SigninActivity extends BaseActivity {
 
     private static final String TAG = "SigninActivity";
@@ -85,8 +78,6 @@ public class SigninActivity extends BaseActivity {
         setContentView(R.layout.activity_signin);
 
         ButterKnife.bind(this);
-
-        buildComponent();
 
         setOnClickListeners();
     }

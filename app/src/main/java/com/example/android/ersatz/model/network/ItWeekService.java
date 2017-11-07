@@ -45,9 +45,4 @@ public interface ItWeekService {
                                 @Header("ApplyOfflineCache") boolean offlineCache,
                                 @Header("ApplyResponseCache") boolean responseCache);
 
-
-    // TODO: handle out of boundaries exception
-    // TODO: handle no results exception
-    // TODO: get rid of headers duplication
-
 }

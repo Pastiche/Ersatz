@@ -9,7 +9,6 @@ import android.support.v4.content.CursorLoader;
 import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
-import com.example.android.ersatz.model.db.ProfileContract;
 import com.example.android.ersatz.model.network.ItWeekService;
 import com.example.android.ersatz.screens.contacts.adapters.ProfileAdapter;
 
@@ -19,7 +18,7 @@ import java.util.List;
 import dagger.Module;
 import dagger.Provides;
 
-import static com.example.android.ersatz.model.db.ProfileContract.*;
+import static com.example.android.ersatz.model.db.ProfileContract.ProfileEntry;
 
 @Module
 public class ControllerModule {
@@ -85,6 +84,4 @@ public class ControllerModule {
                 projection, null, null, null);
     }
 
-
-    // TODO: provide dialogs with different messages
 }

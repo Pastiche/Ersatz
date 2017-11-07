@@ -5,25 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.android.ersatz.R;
-import com.example.android.ersatz.screens.auth.SigninActivity;
 import com.example.android.ersatz.navigation.SimpleFragmentPagerAdapter;
+import com.example.android.ersatz.screens.auth.SigninActivity;
 import com.example.android.ersatz.screens.common.views.BaseViewImpl;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
-// TODO: configure animation of the signin-signout transitions - it is slow
-// TODO: make qr code transfer url not id
 
 public class MainActivity extends BaseActivity {
 
@@ -92,6 +86,7 @@ public class MainActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.signout_button:
                 clearPreferences();
+                deleteCache();
                 startSigninActivity();
                 return true;
             default:

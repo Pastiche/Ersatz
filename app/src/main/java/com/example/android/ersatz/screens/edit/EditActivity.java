@@ -1,7 +1,9 @@
 package com.example.android.ersatz.screens.edit;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
@@ -17,12 +19,8 @@ import javax.inject.Inject;
 public class EditActivity extends BaseActivity implements
         EditView.EditViewListener, NetworkProfileManager.NetworkProfileManagerListener {
 
-    // TODO: replace save-button from the bottom of the screen to the menu
-
     @Inject
     NetworkProfileManager mNetworkManager;
-    @Inject
-    ErsatzApp ersatzApp;
 
     private EditView mView;
     Profile mProfile;
@@ -51,12 +49,13 @@ public class EditActivity extends BaseActivity implements
         mNetworkManager.unregisterListener(this);
     }
 
-    // TODO: allow it only if there is internet
     @Override
     public void onSaveClick(Profile profileToUpdate) {
         mNetworkManager.updateMyProfile(profileToUpdate);
-        finish();
+        showMessage("Saving...");
+        new Handler().postDelayed(this::finish, 1000);
         showMessage("Saved");
+
     }
 
     @Override

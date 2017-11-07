@@ -34,10 +34,6 @@ import static com.example.android.ersatz.utils.QrUtils.*;
 
 import javax.inject.Inject;
 
-// TODO: implement dagger 2 deeper
-// TODO: move out uri matching staff out of this class
-// TODO: make refresh button
-
 public class SearchFragment extends BaseFragment implements
         SearchMvcView.SearchViewListener,
         NetworkProfileManager.NetworkProfileManagerListener {
@@ -49,7 +45,7 @@ public class SearchFragment extends BaseFragment implements
 
     private Profile mProfile;
 
-    private SearchMvcViewImpl mView;
+    private SearchMvcView mView;
 
     public SearchFragment() {
     }
@@ -66,7 +62,7 @@ public class SearchFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mView = new SearchMvcViewImpl(inflater, container, this);
+        mView = new SearchMvcViewImpl(inflater, container, getContext());
         mView.setListener(this);
         return mView.getRootView();
     }
@@ -83,11 +79,23 @@ public class SearchFragment extends BaseFragment implements
         mNetworkManager.unregisterListener(this);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null)
+                showMessage("You cancelled the scanning");
+            else if (validateQuery(result.getContents())) {
+                mNetworkManager.fetchProfileById(result.getContents());
+            }
+        } else
+            super.onActivityResult(requestCode, resultCode, data);
+    }
+
     //-------- view callbacks --------//
 
     @Override
     public void onAddProfileClick() {
-        // TODO: prohibit duplicates
         if (mProfile == null)
             return;
         if (!validateProfilePageUrl())
@@ -130,6 +138,26 @@ public class SearchFragment extends BaseFragment implements
     @Override
     public void onContactUrlClick(Contact contact) {
 
+        if (contact.getType().equals(Contact.CONTACT_TYPE_SKYPE))
+            showMessage("Skype intent not developed yet...");
+
+        else if (contact.getType().equals(Contact.CONTACT_TYPE_EMAIL))
+            startSendEmailIntent(contact.getUrl());
+
+        else startOpenInBrowserIntent(contact);
+    }
+
+    private void startOpenInBrowserIntent(Contact contact) {
+        String path = contact.getUrl();
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(contact.getEndpoint(contact.getType()) + path));
+        startActivity(browserIntent);
+    }
+
+    private void startSendEmailIntent(String email) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setType("text/html");
+        intent.putExtra(Intent.EXTRA_EMAIL, email);
+        startActivity(Intent.createChooser(intent, "Send Email"));
     }
 
     @Override
@@ -142,7 +170,6 @@ public class SearchFragment extends BaseFragment implements
 
     @Override
     public void onProfileFetched(Profile profile) {
-        // TODO: enhance handling no results
         if (profile.getPageUrl() != null) {
             mProfile = profile;
             mView.bindProfile(mProfile);
@@ -154,6 +181,7 @@ public class SearchFragment extends BaseFragment implements
         showMessage(message);
     }
 
+    //-------- menu --------//
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -202,17 +230,5 @@ public class SearchFragment extends BaseFragment implements
         return (query != null && !query.equals(""));
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() == null)
-                showMessage("You cancelled the scanning");
-            else if (validateQuery(result.getContents())) {
-                mNetworkManager.fetchProfileById(result.getContents());
-            }
-        } else
-            super.onActivityResult(requestCode, resultCode, data);
-    }
 
 }

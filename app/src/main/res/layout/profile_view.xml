@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="16dp"
+            android:paddingBottom="48dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="16dp">
@@ -190,27 +190,21 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/qr_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
+            style="@style/fab"
             app:fabSize="normal"
             app:srcCompat="@mipmap/ic_qr"
             app:useCompatPadding="true" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/edit_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
+            style="@style/fab"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_edit"
             app:useCompatPadding="true" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
+            style="@style/fab"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_add"
             app:useCompatPadding="true" />

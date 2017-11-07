@@ -5,9 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-// TODO: fix bug that new user see Malugin Platon's acc
-// TODO: fix bug with NullPointerException when new user signs in after registration
-
 public class Profile {
 
     @SerializedName("user_id")
@@ -24,7 +21,7 @@ public class Profile {
     private String middleName;
     @SerializedName("contacts")
     @Expose
-    private List<Contact> contacts = null;
+    private List<Contact> contacts;
     @SerializedName("page_id")
     @Expose
     private String pageId;
@@ -66,14 +63,17 @@ public class Profile {
     //-------- getting specific contact url--------//
 
     private Contact getSpecificContact(String contactType) {
-        Contact contactToReturn = null;
+
+        if (contacts == null)
+            return null;
+
         for (Contact contact : contacts) {
-            if (contact.getType().equalsIgnoreCase(contactType)) {
-                contactToReturn = contact;
-                break;
-            }
+            if (contact.getType().equalsIgnoreCase(contactType))
+                return contact;
         }
-        return contactToReturn;
+
+        return null;
+
     }
 
     public Contact getVk() {
@@ -115,5 +115,16 @@ public class Profile {
         this.contacts = contacts;
     }
 
-
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "userId='" + userId + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", contacts=" + contacts +
+                ", pageId='" + pageId + '\'' +
+                ", pageUrl='" + pageUrl + '\'' +
+                '}';
+    }
 }

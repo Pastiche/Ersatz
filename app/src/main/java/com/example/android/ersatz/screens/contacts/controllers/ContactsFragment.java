@@ -25,7 +25,6 @@ import com.example.android.ersatz.screens.contacts.adapters.ProfileAdapter;
 import com.example.android.ersatz.screens.contacts.view.ContactsView;
 import com.example.android.ersatz.screens.contacts.view.ContactsView.ContactsViewListener;
 import com.example.android.ersatz.screens.contacts.view.ContactsViewImpl;
-import com.example.android.ersatz.screens.edit.EditActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +33,6 @@ import javax.inject.Inject;
 
 public class ContactsFragment extends BaseFragment implements LoaderCallbacks<Cursor>,
         NetworkProfileManagerListener, ContactsViewListener {
-
-    // TODO: set up search throughout contacts
-    // TODO: make representation CUTE
 
     private static final int PPOFILE_LOADER = 0;
 

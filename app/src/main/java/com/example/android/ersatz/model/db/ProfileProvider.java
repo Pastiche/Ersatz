@@ -28,8 +28,6 @@ public class ProfileProvider extends ContentProvider {
         sUriMatcher.addURI(ProfileContract.CONTENT_AUTHORITY, ProfileContract.PATH_PROFILES + "/#", PROFILE_ID);
     }
 
-    // TODO: solve the issue of url and page id independence
-
 
     @Override
     public boolean onCreate() {

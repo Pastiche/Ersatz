@@ -20,7 +20,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.android.ersatz.screens.contacts.controllers.ContactsFragment;
-import com.example.android.ersatz.screens.profile.ProfileFragment;
+import com.example.android.ersatz.screens.profile.MyProfileFragment;
 import com.example.android.ersatz.screens.search.SearchFragment;
 
 /**
@@ -28,7 +28,7 @@ import com.example.android.ersatz.screens.search.SearchFragment;
  */
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private String tabTitles[] = new String[]{"Profile", "Contacts", "Search"};
+    private String tabTitles[] = new String[]{"Profile", "Search", "Contacts"};
     final int PAGE_COUNT = 3;
 
     public SimpleFragmentPagerAdapter(FragmentManager fm) {
@@ -39,11 +39,11 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         if (position == 0) {
-            return new ProfileFragment();
+            return new MyProfileFragment();
         } else if (position == 1) {
-            return new ContactsFragment();
-        } else {
             return new SearchFragment();
+        } else {
+            return new ContactsFragment();
         }
     }
 

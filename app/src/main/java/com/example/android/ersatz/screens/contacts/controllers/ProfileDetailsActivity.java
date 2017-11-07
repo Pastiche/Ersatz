@@ -3,13 +3,10 @@ package com.example.android.ersatz.screens.contacts.controllers;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.android.ersatz.R;
 import com.example.android.ersatz.entities.Contact;
 import com.example.android.ersatz.entities.Profile;
 import com.example.android.ersatz.model.NetworkProfileManager;
@@ -17,12 +14,10 @@ import com.example.android.ersatz.model.NetworkProfileManager.NetworkProfileMana
 import com.example.android.ersatz.screens.common.controllers.BaseActivity;
 import com.example.android.ersatz.screens.contacts.view.ProfileDetailsView;
 import com.example.android.ersatz.screens.contacts.view.ProfileDetailsViewImpl;
-import com.example.android.ersatz.screens.profile.view.MyProfileView.ProfileViewListener;
-import com.example.android.ersatz.screens.profile.view.MyProfileViewImpl;
 
 import javax.inject.Inject;
 
-import static com.example.android.ersatz.screens.contacts.view.ProfileDetailsView.*;
+import static com.example.android.ersatz.screens.contacts.view.ProfileDetailsView.ProfileDetailsListener;
 import static com.example.android.ersatz.utils.QrUtils.makeBitmapQrCodeFromUrl;
 
 public class ProfileDetailsActivity extends BaseActivity implements ProfileDetailsListener,
@@ -75,6 +70,26 @@ public class ProfileDetailsActivity extends BaseActivity implements ProfileDetai
     @Override
     public void onContactUrlClick(Contact contact) {
 
+        if (contact.getType().equals(Contact.CONTACT_TYPE_SKYPE))
+            showMessage("Skype intent not developed yet...");
+
+        else if (contact.getType().equals(Contact.CONTACT_TYPE_EMAIL))
+            startSendEmailIntent(contact.getUrl());
+
+        else startOpenInBrowserIntent(contact);
+    }
+
+    private void startOpenInBrowserIntent(Contact contact) {
+        String path = contact.getUrl();
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(contact.getEndpoint(contact.getType()) + path));
+        startActivity(browserIntent);
+    }
+
+    private void startSendEmailIntent(String email) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setType("text/html");
+        intent.putExtra(Intent.EXTRA_EMAIL, email);
+        startActivity(Intent.createChooser(intent, "Send Email"));
     }
 
     @Override
@@ -86,7 +101,6 @@ public class ProfileDetailsActivity extends BaseActivity implements ProfileDetai
     @Override
     public void onProfileFetched(Profile profile) {
         mProfile = profile;
-        System.out.println("Okhttp: " + profile);
         mView.bindProfile(mProfile);
     }
 
